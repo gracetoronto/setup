@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>AV Equipment Checklist</title>
+   <link href="css/style.css" rel="stylesheet">
+</head>
+
+<body>
+   <main>
+      <div class="wrapper">
+         <h1>AV Equipment Checklist</h1>
+         <section>
+            <form>
+               <section class="roles">
+                  <table id="roles-table">
+                     <thead>
+                        <tr>
+                           <th class="cell-lg">Name</th>
+                           <th class="cell-lg">Role</th>
+                           <th class="cell-sm">Singing</th>
+                           <th class="cell-sm">Bringing</th>
+                           <th class="cell-sm">Stereo</th>
+                           <th class="cell-md">Position</th>
+                           <th class="cell-actions">Actions</th>
+                        </tr>
+                     </thead>
+                     <tbody>
+                        <!-- Rows will be added dynamically -->
+                     </tbody>
+                  </table>
+               </section>
+               <section class="form-controls">
+                  <div class="form-buttons">
+                     <button type="button" onclick="addRow()">Add Row</button>
+                     <button type="button" onclick="handleChange()">Submit</button>
+                  </div>
+                  <div class="form-options">
+                  <fieldset>
+                     <input type="checkbox" name="use_wireless_mics[]">
+                     <label for="use_wireless_mics[]">Use wireless mics</label>
+                  </fieldset>
+                  <fieldset>
+                     <input type="checkbox" name="macbook_stereo[]">
+                     <label for="macbook_stereo[]">Macbook stereo</label>
+                  </fieldset>
+                  </div>
+               </section>
+            </form>
+         </section>
+         <section id="list">
+            <section>
+               <h2>Channels</h2>
+               <table id="channels-table">
+                  <thead>
+                     <tr>
+                        <th class="cell-sm">Ch #</th>
+                        <th class="cell-lg">Instrument</th>
+                        <th class="cell-actions-sm">Actions</th>
+                     </tr>
+                  </thead>
+                  <tbody>
+                  </tbody>
+               </table>
+            </section>
+            <section>
+               <h2>St. Andrew's Hall</h2>
+               <table id="st-andrews-hall-table">
+                  <thead>
+                     <tr>
+                        <th class="cell-lg">Item</th>
+                        <th class="cell-sm">Qty</th>
+                     </tr>
+                  </thead>
+                  <tbody></tbody>
+                  </tbody>
+               </table>
+            </section>
+            <section>
+               <h2>Neighbours Hall</h2>
+               <table id="neighbours-hall-table">
+                  <thead>
+                     <tr>
+                        <th class="cell-lg">Item</th>
+                        <th class="cell-sm">Qty</th>
+                     </tr>
+                  </thead>
+                  <tbody></tbody>
+                  </tbody>
+               </table>
+            </section>
+            <section>
+               <h2>Not Enough</h2>
+               <table id="not-enough-table">
+                  <thead>
+                     <tr>
+                        <th class="cell-lg">Item</th>
+                        <th class="cell-sm">Qty</th>
+                     </tr>
+                  </thead>
+                  <tbody></tbody>
+                  </tbody>
+               </table>
+            </section>
+         </section>
+      </div>
+   </main>
+   <script src="data/roles.js"></script>
+   <script src="data/always.js"></script>
+   <script src="js/scripts.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,8 @@
+const locations = {
+   stAndrews: {
+
+   },
+   neighbours: {
+
+   }
+}

@@ -1,0 +1,128 @@
+limits: [
+   {  // maximum 2 vocal wireless
+      criteria: musician => musician.role === "vocal_wireless",
+      max: 2,
+      constrainOn: () => { },
+      constrainOff: () => { }
+   }
+]
+
+limits: [
+   {  // maximum 1 acoustic not bringing instrument
+      criteria: musician => musician.role === "acoustic_guitar" && musician.bringing === false,
+      max: 1,
+      constrainOn: () => { },
+      constrainOff: () => { }
+   }
+]
+
+limits: [
+   {  // max 1 piano
+      criteria: musician => musician.role === "piano",
+      max: 1,
+      constrainOn: () => {},
+      constrainOff: () => {}
+   }
+]
+
+limits: [
+   {
+      criteria: musician => musician.role === "keyboard" && musician.bringing === false,
+      max: 2,
+      constrainOn: () => {},
+      constrainOff: () => {}
+   }
+]
+
+{
+   name: "vocal_wireless",
+   label: "Vocal Wireless",
+   constraints: {
+      singing: { checked: true, disabled: true },
+      bringing: { checked: false, disabled: true },
+      stereo: { checked: false, disabled: true }
+   },
+   equipment: () => {
+      equipment.micWireless++;
+      equipment.musicStand++;
+      equipment.xlr++;
+      channels++;
+   } // add chair or mic stand?
+}
+
+const roles = {
+   options: `
+      <option value="vocal_wireless">Vocal Wireless</option>
+      <option value="vocal">Vocal</option>
+      <option value="acoustic_guitar">Acoustic Guitar</option>
+      <option value="piano">Piano</option>
+      <option value="keyboard">Keyboard</option>
+      <option value="electric_guitar">Electric Guitar</option>
+      <option value="bass">Bass</option>
+      <option value="violin">Violin</option>
+      <option value="cajon">Cajon</option>
+      <option value="speaker">Speaker</option>
+   `,
+   constraints: [
+      {
+         name: 'vocal_wireless',
+         singing: { checked: true, disabled: true },
+         bringing: { checked: false, disabled: true },
+         stereo: { checked: false, disabled: true }
+      },
+      {
+         name: 'vocal',
+         singing: { checked: true, disabled: true },
+         bringing: { checked: false, disabled: true },
+         stereo: { checked: false, disabled: true }
+      },
+      {
+         name: 'acoustic_guitar',
+         singing: { checked: false, disabled: false },
+         bringing: { checked: false, disabled: false },
+         stereo: { checked: false, disabled: true }
+      },
+      {
+         name: 'piano',
+         singing: { checked: false, disabled: false },
+         bringing: { checked: false, disabled: true },
+         stereo: { checked: false, disabled: false }
+      },
+      {
+         name: 'keyboard',
+         singing: { checked: false, disabled: false },
+         bringing: { checked: false, disabled: false },
+         stereo: { checked: false, disabled: false }
+      },
+      {
+         name: 'electric_guitar',
+         singing: { checked: false, disabled: false },
+         bringing: { checked: true, disabled: true },
+         stereo: { checked: false, disabled: false }
+      },
+      {
+         name: 'bass',
+         singing: { checked: false, disabled: false },
+         bringing: { checked: false, disabled: false },
+         stereo: { checked: false, disabled: true }
+      },
+      {
+         name: 'violin',
+         singing: { checked: false, disabled: true },
+         bringing: { checked: true, disabled: true },
+         stereo: { checked: false, disabled: true }
+      },
+      {
+         name: 'cajon',
+         singing: { checked: false, disabled: false },
+         bringing: { checked: false, disabled: true },
+         stereo: { checked: false, disabled: true }
+      },
+      {
+         name: 'speaker',
+         singing: { checked: false, disabled: true },
+         bringing: { checked: false, disabled: true },
+         stereo: { checked: false, disabled: true }
+      }
+   ]
+};
