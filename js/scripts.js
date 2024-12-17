@@ -3,7 +3,9 @@
 // alert (out of date)
 // wireless mics
 // need to check if item exists in location
+// need to check if item exists in equipment when adding quantities
 // set equipment variable based on keys of inventories
+// on channel field change
 
 // elements
 const rolesTable = document.getElementById('roles-table').getElementsByTagName('tbody')[0];
@@ -127,7 +129,7 @@ function moveRowUp(button) {
    if (previousRow) {
       row.parentNode.insertBefore(row, previousRow);
 
-      if (button.classList.contains('channel-controls')); {
+      if (button.classList.contains('channel-controls')) {
          numberChannels(tbody);
          listChannels(tbody);
       }
@@ -570,6 +572,9 @@ function populateChannelsList(selection, tbody) {
    });
 
    // add channel numbers
+
+
+
    numberChannels(tbody);
 
    return listChannels(tbody);
