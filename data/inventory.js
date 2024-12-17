@@ -11,7 +11,7 @@ const locations = {
       // PROJECTION
       "Projector": 1,
       "HDMI (Extended)": 0,
-      "HDMI": 1,
+      "HDMI": 0,
       "USB-C Adapter": 1,
 
       // LIGHTING
@@ -65,7 +65,7 @@ const locations = {
       // PROJECTION
       "Projector": 0,
       "HDMI (Extended)": 1,
-      "HDMI": 0,
+      "HDMI": 1,
       "USB-C Adapter": 0,
 
       // LIGHTING
