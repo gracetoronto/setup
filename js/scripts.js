@@ -243,6 +243,66 @@ function calcEquipment(equipAlways, selection, roles, channels, equipment) {
    return [channels, equipment];
 }
 
+function sourceEquipment(equipment, locations) {
+
+   const locs = {...locations};
+   const eq = {...equipment};
+   const needs = {};
+
+   // for each location
+   for (let [locName, locVal] in locs) {
+
+      needs[locName] = {};
+      
+      // for each piece of equipment
+      for (let [eqType, eqVal] in eq) {
+         
+         // only if needed
+         if (eqVal && eqVal > 0) {
+            
+            const diff = locVal[eqType] - eqVal;
+            
+            if (diff > 0) {
+               
+               // need equipment from this location
+               needs[locName][eqType] = eqVal;
+
+               // don't need any more equipment
+               eq[eqType] = 0;
+
+               // remaining quantity of equipment at location
+               locs[locName][eqType] = diff;
+
+            } else if (diff === 0) {
+
+               // need equipment from this location
+               needs[locName][eqType] = eqVal;
+
+               // don't need any more equipment
+               eq[eqType] = 0;
+
+               // no more equipment at location
+               locs[locName][eqType] = 0;
+
+            } else if (diff < 0) {
+
+               // need equipment from this location
+               needs[locName][eqType] = locs[locName][eqType];
+
+               // need more equipment still
+               eq[eqType] = -diff;
+
+               // no more equipment at location
+               locs[locName][eqType] = 0;
+            }
+         }
+      }
+
+      console.log('Needs:');
+      console.log(needs);
+   }
+}
+
 function resetTBody(tbody) {
    tbody.innerHTML = "";
 }
