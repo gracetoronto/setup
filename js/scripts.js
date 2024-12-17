@@ -144,7 +144,7 @@ function moveRowDown(button) {
    if (nextRow) {
       row.parentNode.insertBefore(nextRow, row);
 
-      if (button.classList.contains('channel-controls')); {
+      if (button.classList.contains('channel-controls')) {
          numberChannels(tbody);
          listChannels(tbody);
       }
