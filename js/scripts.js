@@ -15,29 +15,29 @@ const rolesTable = document.getElementById('roles-table').getElementsByTagName('
 let selection = [];
 let channels = 0;
 let equipment = {
-   xlr: 0,
-   xlrLong: 0,
-   tsCable: 0,
-   tsCableLong: 0,
-   powerCable: 0,
-   snake: 0,
+   "XLR": 0,
+   "XLR (Long)": 0,
+   "TS Cable": 0,
+   "TS Cable (Long)": 0,
+   "Power Cable": 0,
+   "Snake": 0,
 
-   micWireless: 0,
-   micWired: 0,
-   micInstrument: 0,
+   "Mic (Wireless)": 0,
+   "Mic (Wired)": 0,
+   "Mic (Instrument)": 0,
 
-   diBox: 0,
-   diBoxDual: 0,
+   "DI Box": 0,
+   "DI Box (Dual)": 0,
 
-   wedge: 0,
+   "Wedge": 0,
 
-   musicStand: 0,
-   boomStand: 0,
-   boomStandShort: 0,
+   "Music Stand": 0,
+   "Boom Stand": 0,
+   "Boom Stand (Short)": 0,
 
-   acousticGuitar: 0,
-   keyboard: 0,
-   bass: 0
+   "Acoustic Guitar": 0,
+   "Keyboard": 0,
+   "Bass": 0
 }
 
 function createRoleOptions(roles) {

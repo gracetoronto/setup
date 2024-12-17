@@ -1,8 +1,8 @@
 const locations = {
-   stAndrews: {
+   "St. Andrew's Hall": {
 
    },
-   neighbours: {
+   "Neighbours Hall": {
 
    }
 }

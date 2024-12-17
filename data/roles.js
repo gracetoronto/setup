@@ -10,12 +10,12 @@ const roles = [
       equip: ({position}, channels, equipment) => {
 
          // always
-         equipment.micWired++;
-         equipment.musicStand++;
+         equipment["Mic (Wired)"]++;
+         equipment["Music Stand"]++;
          channels++;
 
          // depending on distance from stage box, xlr or xlrLong
-         const xlrLength = position === "far" ? "xlrLong" : "xlr";
+         const xlrLength = position === "far" ? "XLR (Long)" : "XLR";
          equipment[xlrLength]++;
 
          return [ channels, equipment ];
@@ -32,23 +32,23 @@ const roles = [
       equip: ({singing, bringing, position}, channels, equipment) => {
 
          // always need
-         equipment.tsCable++;
-         equipment.diBox++;
-         equipment.musicStand++;
+         equipment["TS Cable"]++;
+         equipment["DI Box"]++;
+         equipment["Music Stand"]++;
          channels++;
 
          // depending on distance
-         const xlrLength = position === "far" ? "xlrLong" : "xlr";
+         const xlrLength = position === "far" ? "XLR (Long)" : "XLR";
          equipment[xlrLength]++;
 
          if (singing) {
             equipment[xlrLength]++;
-            equipment.micWired++;
-            equipment.boomStand++;
+            equipment["Mic (Wired)"]++;
+            equipment["Boom Stand"]++;
             channels++;
          }
 
-         equipment.acousticGuitar = bringing ? equipment.acousticGuitar : 1;
+         equipment["Acoustic Guitar"] = bringing ? equipment["Acoustic Guitar"] : 1;
 
          return [ channels, equipment ];
       }
@@ -66,12 +66,12 @@ const roles = [
          if (singing) {
 
             // always
-            equipment.micWired++;
-            equipment.boomStand++;
+            equipment["Mic (Wired)"]++;
+            equipment["Boom Stand"]++;
             channels++;
 
             // depending on distance
-            const xlrLength = position === "far" ? "xlrLong" : "xlr";
+            const xlrLength = position === "far" ? "XLR (Long)" : "XLR";
             equipment[xlrLength]++;
          }
 
@@ -89,35 +89,35 @@ const roles = [
       equip ({singing, bringing, stereo, position}, channels, equipment) {
 
          // always
-         equipment.musicStand++;
+         equipment["Music Stand"]++;
 
          // depending on distance
-         const xlrLength = position === "far" ? "xlrLong" : "xlr";
+         const xlrLength = position === "far" ? "XLR (Long)" : "XLR";
          equipment[xlrLength] = stereo ? equipment[xlrLength] + 2 : equipment[xlrLength] + 1;
 
 
          // if stereo, need double the equipment
          if (stereo) {
-            equipment.tsCable += 2;
-            equipment.diBoxDual++;
+            equipment["TS Cable"] += 2;
+            equipment["DI Box (Dual)"]++;
             channels += 2;
 
          // if mono
          } else {
-            equipment.tsCable++;
-            equipment.diBox++;
+            equipment["TS Cable"]++;
+            equipment["DI Box"]++;
             channels++;
          }
 
          if (singing) {
             equipment[xlrLength]++;
-            equipment.micWired++;
-            equipment.boomStand++;
+            equipment["Mic (Wired)"]++;
+            equipment["Boom Stand"]++;
             channels++;
          }
 
          // bringing keyboard
-         equipment.keyboard = bringing ? equipment.keyboard : equipment.keyboard++;
+         equipment["Keyboard"] = bringing ? equipment["Keyboard"] : equipment["Keyboard"]++;
 
          return [ channels, equipment ];
       }
@@ -133,27 +133,27 @@ const roles = [
       equip: ({singing, stereo, position}, channels, equipment) => {
          
          // always
-         equipment.musicStand++;
+         equipment["Music Stand"]++;
 
          // depending on distance
-         const xlrLength = position === "far" ? "xlrLong" : "xlr";
+         const xlrLength = position === "far" ? "XLR (Long)" : "XLR";
          equipment[xlrLength] = stereo ? equipment[xlrLength] + 2 : equipment[xlrLength] + 1;
 
          // if stereo, need double
          if (stereo) {
-            equipment.tsCable += 2;
-            equipment.diBoxDual++;
+            equipment["TS Cable"] += 2;
+            equipment["DI Box (Dual)"]++;
             channels += 2;
          } else {
-            equipment.tsCable++;
-            equipment.diBox++;
+            equipment["TS Cable"]++;
+            equipment["DI Box"]++;
             channels++;
          }
 
          if (singing) {
             equipment[xlrLength]++;
-            equipment.micWired++;
-            equipment.boomStand++;
+            equipment["Mic (Wired)"]++;
+            equipment["Boom Stand"]++;
             channels++;
          }
 
@@ -177,13 +177,13 @@ const roles = [
          channels++;
 
          // depending on distance
-         const xlrLength = position === "far" ? "xlrLong" : "xlr";
+         const xlrLength = position === "far" ? "XLR (Long)" : "XLR";
          equipment[xlrLength]++;
 
          if (singing) {
             equipment[xlrLength]++;
-            equipment.micWired++;
-            equipment.boomStand++;
+            equipment["Mic (Wired)"]++;
+            equipment["Boom Stand"]++;
             channels++;
          }
 
@@ -203,12 +203,12 @@ const roles = [
       equip: ({position}, channels, equipment) => {
 
          // always
-         equipment.musicStand++;
-         equipment.boomStand++;
+         equipment["Music Stand"]++;
+         equipment["Boom Stand"]++;
          channels++;
 
          // depending on distance
-         const xlrLength = position === "far" ? "xlrLong" : "xlr";
+         const xlrLength = position === "far" ? "XLR (Long)" : "XLR";
          equipment[xlrLength]++;
 
          return [ channels, equipment ];
@@ -225,24 +225,24 @@ const roles = [
       equip: ({singing, bringing, position}, channels, equipment) => {
          
          // always
-         equipment.musicStand++;
-         equipment.boomStandShort++;
-         equipment.micInstrument++;
+         equipment["Music Stand"]++;
+         equipment["Boom Stand (Short)"]++;
+         equipment["Mic (Instrument)"]++;
          channels++;
          
          // depending on distance
-         const xlrLength = position === "far" ? "xlrLong" : "xlr";
+         const xlrLength = position === "far" ? "XLR (Long)" : "XLR";
          equipment[xlrLength]++;
 
          if (singing) {
             equipment[xlrLength]++;
-            equipment.boomStand++;
-            equipment.micWired++;
+            equipment["Boom Stand"]++;
+            equipment["Mic (Wired)"]++;
             channels++;
          }
 
          if (!bringing) {
-            equipment.cajon = 1;
+            equipment["Cajon"] = 1;
          }
 
          return [ channels, equipment ];
@@ -259,12 +259,12 @@ const roles = [
       equip: ({position}, channels, equipment) => {
 
          // always
-         equipment.micWired++;
-         equipment.musicStand++;
+         equipment["Mic (Wired)"]++;
+         equipment["Music Stand"]++;
          channels++;
 
          // depending on distance
-         const xlrLength = position === "far" ? "xlrLong" : "xlr";
+         const xlrLength = position === "far" ? "XLR (Long)" : "XLR";
          equipment[xlrLength]++;
 
          return [ channels, equipment ];
