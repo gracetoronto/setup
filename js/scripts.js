@@ -1,11 +1,7 @@
 // max channels
-// make list from channel rowElements
 // empty states
-// add channel row
 // alert (out of date)
 // wireless mics
-// click fieldset
-// change "Remove" to "-"
 
 // elements
 const rolesTable = document.getElementById('roles-table').getElementsByTagName('tbody')[0];
@@ -72,10 +68,10 @@ function addRow() {
             <option value="far">Far</option>
          </select>
       </td>
-      <td class="cell-actions">
+      <td class="cell-actions-sm">
          <button type="button" onclick="moveRowUp(this)">&uarr;</button>
          <button type="button" onclick="moveRowDown(this)">&darr;</button>
-         <button type="button" onclick="removeRow(this)">Remove</button>
+         <button type="button" onclick="removeRow(this)">–</button>
       </td>
    `;
 }
@@ -88,6 +84,7 @@ function removeRow(button) {
 
    if (button.classList.contains('channel-controls')); {
       numberChannels(tbody);
+      listChannels(tbody);
    }
 
 }
@@ -102,6 +99,7 @@ function moveRowUp(button) {
 
       if (button.classList.contains('channel-controls')); {
          numberChannels(tbody);
+         listChannels(tbody);
       }
    }
 }
@@ -116,9 +114,21 @@ function moveRowDown(button) {
 
       if (button.classList.contains('channel-controls')); {
          numberChannels(tbody);
+         listChannels(tbody);
       }
    }
 }
+
+function handleLabelClick(e) {
+   const fieldset = e.currentTarget.closest('fieldset');
+   const checkbox = fieldset.querySelector('input[type="checkbox"]');
+   checkbox.checked = !checkbox.checked;
+}
+const labels = Array.from(document.querySelectorAll('input[type="checkbox"] + label'));
+labels.forEach(label => {
+   label.addEventListener('click', handleLabelClick);
+});
+
 
 function handleRoleChange(select) {
    const row = select.closest('tr');
@@ -137,15 +147,6 @@ function handleRoleChange(select) {
    stereo.checked = constraints.stereo.checked;
    stereo.disabled = constraints.stereo.disabled;
 }
-
-
-
-
-
-
-
-
-
 
 function updateSelection(rolesTable) {
    const rows = Array.from(rolesTable.querySelectorAll('tr'));
@@ -253,6 +254,42 @@ function numberChannels(tbody) {
    });
 }
 
+function listChannels(tbody) {
+
+   const section = tbody.closest('section');
+
+   // remove any existing list
+   let existingListHeading = section.querySelector('h3');
+   if (existingListHeading) { existingListHeading.remove(); }
+
+
+   let existingList = section.querySelector('ol');
+   if (existingList) { existingList.remove(); }
+
+
+   // create <li> elements from rows
+   const populatedRows = Array.from(tbody.querySelectorAll('tr'));
+
+   const listElements = populatedRows.map(row => {
+      return `
+            <li>${row.querySelector('td>input').value}</li>
+         `;
+   });
+
+   // create <ol> from array
+   const newList = `
+         <h3>Channels List</h3>
+         <ol id="channels-list">
+            ${listElements.join("")}
+         </ol>
+      `;
+
+   // append <ol> to channels-section
+   section.innerHTML += newList;
+
+   return newList;
+}
+
 function populateChannelsList(selection, tbody) {
 
    const cellActions = `
@@ -313,40 +350,11 @@ function populateChannelsList(selection, tbody) {
       return rowCode;
    });
 
-   let listElements = selection.map(musician => {
-
-      const roleLabel = roles.find(role => role.name === musician.role).label;
-
-      let liCode = `
-         <li class="role-${musician.role} position-${musician.position} ${musician.stereo ? `stereo` : ``}">
-            ${roleLabel}${musician.stereo ? ` L` : ``}${musician.name ? ` (${musician.name})` : ``}
-         </li>
-         ${musician.stereo ? `
-            <!-- split -->
-            <li class="role-${musician.role} position-${musician.position} ${musician.stereo ? `stereo` : ``}">
-               ${roleLabel} R${musician.name ? ` (${musician.name})` : ``}
-            </li>
-         ` : ``}
-      `;
-
-      if (musician.singing && musician.role !== "vocal" && musician.role !== "speaker") {
-         liCode += `
-            <!-- split -->
-            <li class="role-vocal position-${musician.position}">
-               Vocal${musician.name ? ` (${musician.name})` : ``}
-            </li>
-         `;
-      }
-
-      return liCode;
-   });
-
-
    // split rows properly
    rowElements = rowElements.join('<!-- split -->').split('<!-- split -->');
 
    // rearrange rows
-   const rearrangedRowElements = [];
+   const rearrangedRows = [];
 
    // find last far stereo instrument
    let lastStereo = rowElements.filter(row => row.indexOf("far") !== -1 && row.indexOf("stereo" !== - 1));
@@ -389,27 +397,27 @@ function populateChannelsList(selection, tbody) {
    // if no far stereo instruments, find last stereo instrument
 
    // add speaker first
-   rearrangedRowElements.push(...rowElements.filter(row => row.indexOf("role-speaker") !== -1));
+   rearrangedRows.push(...rowElements.filter(row => row.indexOf("role-speaker") !== -1));
    rowElements = rowElements.filter(row => row.indexOf("role-speaker") === -1);
 
    // then add near vocal channels
-   rearrangedRowElements.push(...rowElements.filter(row => row.indexOf("role-vocal") !== -1 && row.indexOf("position-near") !== -1));
+   rearrangedRows.push(...rowElements.filter(row => row.indexOf("role-vocal") !== -1 && row.indexOf("position-near") !== -1));
    rowElements = rowElements.filter(row => (row.indexOf("role-vocal") === -1 || row.indexOf("position-near") === -1));
 
    // then add far vocal channels
-   rearrangedRowElements.push(...rowElements.filter(row => row.indexOf("role-vocal") !== -1));
+   rearrangedRows.push(...rowElements.filter(row => row.indexOf("role-vocal") !== -1));
    rowElements = rowElements.filter(row => row.indexOf("role-vocal") === -1);
 
    // then add near instruments
-   rearrangedRowElements.push(...rowElements.filter(row => row.indexOf("position-near") !== -1));
+   rearrangedRows.push(...rowElements.filter(row => row.indexOf("position-near") !== -1));
    rowElements = rowElements.filter(row => row.indexOf("position-near") === -1);
 
    // then add far instruments
-   rearrangedRowElements.push(...rowElements);
+   rearrangedRows.push(...rowElements);
 
    // if odd number of channels
-   if (rearrangedRowElements.length % 2 !== 0 && lastStereo.length >= 2 && rearrangedRowElements.length >= 7) {
-      rearrangedRowElements.push(`
+   if (rearrangedRows.length % 2 !== 0 && lastStereo.length >= 2 && rearrangedRows.length >= 7) {
+      rearrangedRows.push(`
          <tr>
             <td class="cell-sm">
             </td>
@@ -423,13 +431,13 @@ function populateChannelsList(selection, tbody) {
 
    // then add last stereo instrument
    if (lastStereo.length >= 2) {
-      rearrangedRowElements.push(...lastStereo);
+      rearrangedRows.push(...lastStereo);
    }
 
    // add empty channels
    const macbookStereo = document.querySelector('input[name="macbook_stereo[]"]');
-   while (rearrangedRowElements.length < 8 && macbookStereo.checked) {
-      rearrangedRowElements.push(`
+   while (rearrangedRows.length < 8 && macbookStereo.checked) {
+      rearrangedRows.push(`
          <tr>
             <td class="cell-sm">
             </td>
@@ -442,8 +450,7 @@ function populateChannelsList(selection, tbody) {
    }
 
    // then add Macbook
-
-   rearrangedRowElements.push(`
+   rearrangedRows.push(`
       <tr>
          <td class="cell-sm">
          </td>
@@ -455,7 +462,7 @@ function populateChannelsList(selection, tbody) {
    `);
 
    if (macbookStereo.checked) {
-      rearrangedRowElements.push(`
+      rearrangedRows.push(`
          <tr>
             <td class="cell-sm">
             </td>
@@ -468,16 +475,14 @@ function populateChannelsList(selection, tbody) {
    }
 
    // append rows
-   rearrangedRowElements.forEach(row => {
+   rearrangedRows.forEach(row => {
       tbody.innerHTML += row;
    });
 
    // add channel numbers
    numberChannels(tbody);
 
-   const list = `<ol>${listElements.join('')}</ol>`;
-
-   return list;
+   return listChannels(tbody);
 }
 
 function handleChange() {
