@@ -7,7 +7,7 @@ html {
 }
 
 /* normalize */
-h1, h2, h3, h4, h5, h6, p, input, select, button {
+h1, h2, h3, h4, h5, h6, p, input, select, button, ol, li {
    margin: 0;
 }
 
@@ -179,4 +179,8 @@ td > button {
    flex-grow: 2;
    flex-shrink: 2;
    flex-basis: 40%;
+}
+
+ol {
+   padding-left: 1.5rem;
 }
