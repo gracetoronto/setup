@@ -11,7 +11,7 @@ const locations = {
       // PROJECTION
       "Projector": 1,
       "HDMI (Extended)": 0,
-      "HDMI": 1,
+      "HDMI": 0,
       "USB-C Adapter": 1,
 
       // LIGHTING
@@ -63,20 +63,20 @@ const locations = {
       "Power Bar": 0,
 
       // PROJECTION
-      "Projector": 1,
+      "Projector": 0,
       "HDMI (Extended)": 1,
       "HDMI": 1,
-      "USB-C Adapter": 1,
+      "USB-C Adapter": 0,
 
       // LIGHTING
-      "Side Flood Lights": 4,
-      "Stage PAR": 4,
-      "Stage Wash": 2,
-      "DMX Transmitter": 6,
-      "DMX Receiver": 1,
-      "USB to DMX Adapter": 1,
-      "USB-C Adapter": 1,
-      "Light Stand": 2,
+      "Side Flood Lights": 0,
+      "Stage PAR": 0,
+      "Stage Wash": 0,
+      "DMX Transmitter": 0,
+      "DMX Receiver": 0,
+      "USB to DMX Adapter": 0,
+      "USB-C Adapter": 0,
+      "Light Stand": 0,
 
       // SOUND
       // Cables
