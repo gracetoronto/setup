@@ -11,13 +11,12 @@
       // XLR -> XLR (Long)
       // XLR (Long) -> XLR x2
    // add cables for macbook audio
+   // channel quantity
 
 // Low prio
    // max channels
-   // empty states
    // alert (changes made, submit again)
    // add channel
-   // limit to max channels?
    // clarify USB names
 
 
@@ -30,8 +29,8 @@ let selection = [];
 let channels = 0;
 let equipment = {};
 
-function createRoleOptions(roles) {
-   const optionElements = roles.map(role => `<option value="${role.name}">${role.label}</option>`);
+function createInstrumentOptions(instruments) {
+   const optionElements = instruments.map(instr => `<option value="${instr.name}">${instr.label}</option>`);
    return optionElements.join('');
 }
 
@@ -42,13 +41,13 @@ function addRow() {
       <td class="cell-lg">
          <input type="text" name="name[]" placeholder="Enter Name" style="width: 100%;" maxlength="20">
       </td>
-      <td class="cell-lg">
-         <select name="role[]" onchange="handleRoleChange(this)">
-            ${createRoleOptions(roles)}
-         </select>
-      </td>
-      <td class="cell-sm">
+      <td class="cell-md">
          <input type="checkbox" name="singing[]" value="yes" checked disabled>
+      </td>
+      <td class="cell-md">
+         <select name="instrument[]" onchange="handleInstrumentChange(this)">
+            ${createInstrumentOptions(instruments)}
+         </select>
       </td>
       <td class="cell-sm">
          <input type="checkbox" name="bringing[]" value="yes" disabled>
@@ -56,7 +55,7 @@ function addRow() {
       <td class="cell-sm">
          <input type="checkbox" name="stereo[]" value="yes" disabled>
       </td>
-      <td class="cell-md">
+      <td class="cell-sm">
          <select name="position[]">
             <option value="near">Near</option>
             <option value="far">Far</option>
@@ -124,13 +123,13 @@ labels.forEach(label => {
 });
 
 
-function handleRoleChange(select) {
+function handleInstrumentChange(select) {
    const row = select.closest('tr');
    const singing = row.querySelector('input[name="singing[]"]');
    const bringing = row.querySelector('input[name="bringing[]"]');
    const stereo = row.querySelector('input[name="stereo[]"]');
 
-   const constraints = roles.find(role => role.name === select.value).constraints;
+   const constraints = instruments.find(instr => instr.name === select.value).constraints;
 
    singing.checked = constraints.singing.checked;
    singing.disabled = constraints.singing.disabled;
@@ -147,7 +146,7 @@ function updateSelection(rolesTable) {
    return rows.map(row => {
       return {
          name: row.querySelector('input[name="name[]"]').value,
-         role: row.querySelector('select[name="role[]"]').value,
+         instrument: row.querySelector('select[name="instrument[]"]').value,
          singing: row.querySelector('input[name="singing[]"]').checked,
          bringing: row.querySelector('input[name="bringing[]"]').checked,
          stereo: row.querySelector('input[name="stereo[]"]').checked,
@@ -184,7 +183,7 @@ function getEquipmentDiff(obj1, obj2) {
    return differences;
 }
 
-function addEquipment(channels, equipment, equip, name, role) {
+function addEquipment(channels, equipment, equip, name, instrument) {
 
    const equipmentBefore = { ...equipment };
    const channelsBefore = channels;
@@ -192,13 +191,13 @@ function addEquipment(channels, equipment, equip, name, role) {
    [channels, equipment] = equip(channels, equipment);
 
    const log = { equipment: getEquipmentDiff(equipment, equipmentBefore), channels: channels - channelsBefore };
-   if (role) { log.name = name; log.role = role; }
+   if (instrument) { log.name = name; log.instrument = instrument; }
    console.log(log);
 
    return [channels, equipment];
 }
 
-function calcEquipment(equipAlways, selection, roles, channels, equipment) {
+function calcEquipment(equipAlways, selection, instruments, channels, equipment) {
 
    // always add this equipment
    console.log("Always:");
@@ -207,11 +206,11 @@ function calcEquipment(equipAlways, selection, roles, channels, equipment) {
    console.log("Musicians:");
    selection.forEach(musician => {
 
-      const role = roles.find(role => role.name === musician.role);
+      const instrument = instruments.find(instr => instr.name === musician.instrument);
 
       [channels, equipment] = addEquipment(channels, equipment, (channels, equipment) => {
 
-         [channels, equipment] = role.equip({
+         [channels, equipment] = instrument.equip({
             singing: musician.singing,
             bringing: musician.bringing,
             stereo: musician.stereo,
@@ -220,7 +219,7 @@ function calcEquipment(equipAlways, selection, roles, channels, equipment) {
 
          return [channels, equipment];
 
-      }, musician.name, musician.role);
+      }, musician.name, musician.instrument);
    });
 
    // remove properties that equal 0
@@ -246,53 +245,58 @@ function sourceEquipment(equipment, locations) {
    const needs = {};
 
    // for each location
-   for (let [locName, locVal] in locs) {
+   for (let [locName, locInventory] in locs) {
 
       needs[locName] = {};
       
       // for each piece of equipment
-      for (let [eqType, eqVal] in eq) {
+      for (let [eqItem, eqQty] in eq) {
          
          // only if needed
-         if (eqVal && eqVal > 0) {
+         if (eqQty && eqQty > 0) {
+
+            if (locInventory[eqItem]) {
+
+               const diff = locInventory[eqItem] - eqQty;
             
-            const diff = locVal[eqType] - eqVal;
-            
-            if (diff > 0) {
-               
-               // need equipment from this location
-               needs[locName][eqType] = eqVal;
-
-               // don't need any more equipment
-               eq[eqType] = 0;
-
-               // remaining quantity of equipment at location
-               locs[locName][eqType] = diff;
-
-            } else if (diff === 0) {
-
-               // need equipment from this location
-               needs[locName][eqType] = eqVal;
-
-               // don't need any more equipment
-               eq[eqType] = 0;
-
-               // no more equipment at location
-               locs[locName][eqType] = 0;
-
-            } else if (diff < 0) {
-
-               // need equipment from this location
-               needs[locName][eqType] = locs[locName][eqType];
-
-               // need more equipment still
-               eq[eqType] = -diff;
-
-               // no more equipment at location
-               locs[locName][eqType] = 0;
+               if (diff > 0) {
+                  
+                  // need equipment from this location
+                  needs[locName][eqItem] = eqQty;
+   
+                  // don't need any more equipment
+                  eq[eqItem] = 0;
+   
+                  // remaining quantity of equipment at location
+                  locs[locName][eqItem] = diff;
+   
+               } else if (diff === 0) {
+   
+                  // need equipment from this location
+                  needs[locName][eqItem] = eqQty;
+   
+                  // don't need any more equipment
+                  eq[eqItem] = 0;
+   
+                  // no more equipment at location
+                  locs[locName][eqItem] = 0;
+   
+               } else if (diff < 0) {
+   
+                  // need equipment from this location
+                  needs[locName][eqItem] = locs[locName][eqItem];
+   
+                  // need more equipment still
+                  eq[eqItem] = -diff;
+   
+                  // no more equipment at location
+                  locs[locName][eqItem] = 0;
+               }
             }
          }
       }
+
+      // go through locations again and substitute items
 
       console.log('Needs:');
       console.log(needs);
@@ -356,24 +360,28 @@ function populateChannels(selection, tbody) {
    let channelCounter = 1;
    let rowElements = selection.map((musician) => {
 
-      const roleLabel = roles.find(role => role.name === musician.role).label;
+      let instrumentLabel = instruments.find(instr => instr.name === musician.instrument).label;
+
+      if (instrumentLabel === "None") {
+         instrumentLabel = "Mic";
+      }
 
       let rowCode = `
-         <tr class="role-${musician.role} position-${musician.position} ${musician.stereo ? `stereo` : ``}">
+         <tr class="instr-${musician.instrument} position-${musician.position} ${musician.stereo ? `stereo` : ``}">
             <td class="cell-sm">
             </td>
             <td class="cell-lg">
-               <input type="text" value="${roleLabel}${musician.stereo ? ` L` : ``}${musician.name ? ` (${musician.name})` : ``}">
+               <input type="text" value="${instrumentLabel}${musician.stereo ? ` L` : ``}${musician.name ? ` (${musician.name})` : ``}">
             </td>
             ${cellActions}
          </tr>
          ${musician.stereo ? `
             <!-- split -->
-            <tr class="role-${musician.role} position-${musician.position} ${musician.stereo ? `stereo` : ``}">
+            <tr class="instr-${musician.instrument} position-${musician.position} ${musician.stereo ? `stereo` : ``}">
                <td class="cell-sm">
                </td>
                <td class="cell-lg">
-                  <input type="text" value="${roleLabel} R${musician.name ? ` (${musician.name})` : ``}">
+                  <input type="text" value="${instrumentLabel} R${musician.name ? ` (${musician.name})` : ``}">
                </td>
                ${cellActions}
             </tr>
@@ -386,14 +394,14 @@ function populateChannels(selection, tbody) {
          channelCounter++;
       }
 
-      if (musician.singing && musician.role !== "vocal" && musician.role !== "speaker") {
+      if (musician.singing && musician.instrument !== "none" && musician.instrument !== "speaker") {
          rowCode += `
             <!-- split -->
-            <tr class="role-vocal position-${musician.position}">
+            <tr class="instr-none position-${musician.position}">
                <td class="cell-sm">
                </td>
                <td class="cell-lg">
-                  <input type="text" value="Vocal${musician.name ? ` (${musician.name})` : ``}">
+                  <input type="text" value="Mic${musician.name ? ` (${musician.name})` : ``}">
                </td>
                ${cellActions}
             </tr>
@@ -449,17 +457,17 @@ function populateChannels(selection, tbody) {
 
    // if no far stereo instruments, find last stereo instrument
 
-   // add speaker first
-   rearrangedRows.push(...rowElements.filter(row => row.indexOf("role-speaker") !== -1));
-   rowElements = rowElements.filter(row => row.indexOf("role-speaker") === -1);
+   // // add speaker first
+   // rearrangedRows.push(...rowElements.filter(row => row.indexOf("role-speaker") !== -1));
+   // rowElements = rowElements.filter(row => row.indexOf("role-speaker") === -1);
 
    // then add near vocal channels
-   rearrangedRows.push(...rowElements.filter(row => row.indexOf("role-vocal") !== -1 && row.indexOf("position-near") !== -1));
-   rowElements = rowElements.filter(row => (row.indexOf("role-vocal") === -1 || row.indexOf("position-near") === -1));
+   rearrangedRows.push(...rowElements.filter(row => row.indexOf("instr-none") !== -1 && row.indexOf("position-near") !== -1));
+   rowElements = rowElements.filter(row => (row.indexOf("instr-none") === -1 || row.indexOf("position-near") === -1));
 
    // then add far vocal channels
-   rearrangedRows.push(...rowElements.filter(row => row.indexOf("role-vocal") !== -1));
-   rowElements = rowElements.filter(row => row.indexOf("role-vocal") === -1);
+   rearrangedRows.push(...rowElements.filter(row => row.indexOf("instr-none") !== -1));
+   rowElements = rowElements.filter(row => row.indexOf("instr-none") === -1);
 
    // then add near instruments
    rearrangedRows.push(...rowElements.filter(row => row.indexOf("position-near") !== -1));
@@ -555,7 +563,7 @@ function handleChange() {
 
    // calculate equipment needed
    console.log("EQUIPMENT LIST");
-   [channels, equipment] = calcEquipment(equipAlways, selection, roles, channels, equipment);
+   [channels, equipment] = calcEquipment(equipAlways, selection, instruments, channels, equipment);
 
    // list channels
    const channelsTBody = document.querySelector('#channels-table>tbody');

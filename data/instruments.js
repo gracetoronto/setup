@@ -8,10 +8,10 @@ function addItem(equipment, item, add) {
    return equipment;
 }
 
-const roles = [
+const instruments = [
    {
-      name: "vocal",
-      label: "Vocal",
+      name: "none",
+      label: "None",
       constraints: {
          singing: { checked: true, disabled: true },
          bringing: { checked: false, disabled: true },
@@ -265,26 +265,26 @@ const roles = [
          return [ channels, equipment ];
       }
    },
-   {
-      name: "speaker",
-      label: "Speaker",
-      constraints: {
-         singing: { checked: true, disabled: true },
-         bringing: { checked: false, disabled: true },
-         stereo: { checked: false, disabled: true }
-      },
-      equip: ({position}, channels, equipment) => {
+   // {
+   //    name: "speaker",
+   //    label: "Speaker",
+   //    constraints: {
+   //       singing: { checked: true, disabled: true },
+   //       bringing: { checked: false, disabled: true },
+   //       stereo: { checked: false, disabled: true }
+   //    },
+   //    equip: ({position}, channels, equipment) => {
 
-         // always
-         equipment = addItem(equipment, "Mic (Wired)", 1);
-         equipment = addItem(equipment, "Music Stand", 1);
-         channels++;
+   //       // always
+   //       equipment = addItem(equipment, "Mic (Wired)", 1);
+   //       equipment = addItem(equipment, "Music Stand", 1);
+   //       channels++;
 
-         // depending on distance
-         const xlrLength = position === "far" ? "XLR Cable (Long)" : "XLR Cable";
-         equipment = addItem(equipment, xlrLength, 1);
+   //       // depending on distance
+   //       const xlrLength = position === "far" ? "XLR Cable (Long)" : "XLR Cable";
+   //       equipment = addItem(equipment, xlrLength, 1);
 
-         return [ channels, equipment ];
-      }
-   }
+   //       return [ channels, equipment ];
+   //    }
+   // }
 ]
