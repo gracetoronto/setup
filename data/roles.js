@@ -1,3 +1,13 @@
+function addItem(equipment, item, add) {
+   if (equipment[item] === undefined || equipment[item] === null) {
+      equipment[item] = 0;
+   }
+
+   equipment[item] += add;
+
+   return equipment;
+}
+
 const roles = [
    {
       name: "vocal",
@@ -10,13 +20,13 @@ const roles = [
       equip: ({position}, channels, equipment) => {
 
          // always
-         equipment["Mic (Wired)"]++;
-         equipment["Music Stand"]++;
+         equipment = addItem(equipment, "Mic (Wired)", 1);
+         equipment = addItem(equipment, "Music Stand", 1);
          channels++;
 
          // depending on distance from stage box, xlr or xlrLong
-         const xlrLength = position === "far" ? "XLR (Long)" : "XLR";
-         equipment[xlrLength]++;
+         const xlrLength = position === "far" ? "XLR Cable (Long)" : "XLR Cable";
+         equipment = addItem(equipment, xlrLength, 1);
 
          return [ channels, equipment ];
       }
@@ -32,23 +42,25 @@ const roles = [
       equip: ({singing, bringing, position}, channels, equipment) => {
 
          // always need
-         equipment["TS Cable"]++;
-         equipment["DI Box"]++;
-         equipment["Music Stand"]++;
+         equipment = addItem(equipment, "1/4 TS Cable", 1);
+         equipment = addItem(equipment, "DI Box", 1);
+         equipment = addItem(equipment, "Music Stand", 1);
          channels++;
 
          // depending on distance
-         const xlrLength = position === "far" ? "XLR (Long)" : "XLR";
-         equipment[xlrLength]++;
+         const xlrLength = position === "far" ? "XLR Cable (Long)" : "XLR Cable";
+         equipment = addItem(equipment, xlrLength, 1);
 
          if (singing) {
-            equipment[xlrLength]++;
-            equipment["Mic (Wired)"]++;
-            equipment["Boom Stand"]++;
+            equipment = addItem(equipment, xlrLength, 1);
+            equipment = addItem(equipment, "Mic (Wired)", 1);
+            equipment = addItem(equipment, "Boom Stand", 1);
             channels++;
          }
 
-         equipment["Acoustic Guitar"] = bringing ? equipment["Acoustic Guitar"] : 1;
+         if (!bringing) {
+            equipment = addItem(equipment, "Acoustic Guitar", 1);
+         }
 
          return [ channels, equipment ];
       }
@@ -66,13 +78,13 @@ const roles = [
          if (singing) {
 
             // always
-            equipment["Mic (Wired)"]++;
-            equipment["Boom Stand"]++;
+            equipment = addItem(equipment, "Mic (Wired)", 1);
+            equipment = addItem(equipment, "Boom Stand", 1);
             channels++;
 
             // depending on distance
-            const xlrLength = position === "far" ? "XLR (Long)" : "XLR";
-            equipment[xlrLength]++;
+            const xlrLength = position === "far" ? "XLR Cable (Long)" : "XLR Cable";
+            equipment = addItem(equipment, xlrLength, 1);
          }
 
          return [ channels, equipment ];
@@ -83,41 +95,44 @@ const roles = [
       label: "Keyboard",
       constraints: {
          singing: { checked: false, disabled: false },
-         bringing: { checked: false, disabled: false },
+         bringing: { checked: false, disabled: true },
          stereo: { checked: false, disabled: false }
       },
       equip ({singing, bringing, stereo, position}, channels, equipment) {
 
          // always
-         equipment["Music Stand"]++;
+         equipment = addItem(equipment, "Music Stand", 1);
 
          // depending on distance
-         const xlrLength = position === "far" ? "XLR (Long)" : "XLR";
-         equipment[xlrLength] = stereo ? equipment[xlrLength] + 2 : equipment[xlrLength] + 1;
+         const xlrLength = position === "far" ? "XLR Cable (Long)" : "XLR Cable";
+         equipment = addItem(equipment, xlrLength, stereo ? 2 : 1);
+         
 
 
          // if stereo, need double the equipment
          if (stereo) {
-            equipment["TS Cable"] += 2;
-            equipment["DI Box (Dual)"]++;
+            equipment = addItem(equipment, "1/4 TS Cable", 2);
+            equipment = addItem(equipment, "DI Box (Stereo)", 1);
             channels += 2;
 
          // if mono
          } else {
-            equipment["TS Cable"]++;
-            equipment["DI Box"]++;
+            equipment = addItem(equipment, "1/4 TS Cable", 1);
+            equipment = addItem(equipment, "DI Box", 1);
             channels++;
          }
 
          if (singing) {
-            equipment[xlrLength]++;
-            equipment["Mic (Wired)"]++;
-            equipment["Boom Stand"]++;
+            equipment = addItem(equipment, xlrLength, 1);
+            equipment = addItem(equipment, "Mic (Wired)", 1);
+            equipment = addItem(equipment, "Boom Stand", 1);
             channels++;
          }
 
-         // bringing keyboard
-         equipment["Keyboard"] = bringing ? equipment["Keyboard"] : equipment["Keyboard"]++;
+         if (!bringing) {
+            equipment = addItem(equipment, "Keyboard", 1);
+            equipment = addItem(equipment, "Keyboard Stand", 1);
+         }
 
          return [ channels, equipment ];
       }
@@ -133,27 +148,27 @@ const roles = [
       equip: ({singing, stereo, position}, channels, equipment) => {
          
          // always
-         equipment["Music Stand"]++;
+         equipment = addItem(equipment, "Music Stand", 1);
 
          // depending on distance
-         const xlrLength = position === "far" ? "XLR (Long)" : "XLR";
-         equipment[xlrLength] = stereo ? equipment[xlrLength] + 2 : equipment[xlrLength] + 1;
+         const xlrLength = position === "far" ? "XLR Cable (Long)" : "XLR Cable";
+         equipment = addItem(equipment, xlrLength, stereo ? 2 : 1);
 
          // if stereo, need double
          if (stereo) {
-            equipment["TS Cable"] += 2;
-            equipment["DI Box (Dual)"]++;
+            equipment = addItem(equipment, "1/4 TS Cable", 2);
+            equipment = addItem(equipment, "DI Box (Stereo)", 1);
             channels += 2;
          } else {
-            equipment["TS Cable"]++;
-            equipment["DI Box"]++;
+            equipment = addItem(equipment, "1/4 TS Cable", 1);
+            equipment = addItem(equipment, "DI Box", 1);
             channels++;
          }
 
          if (singing) {
-            equipment[xlrLength]++;
-            equipment["Mic (Wired)"]++;
-            equipment["Boom Stand"]++;
+            equipment = addItem(equipment, xlrLength, 1);
+            equipment = addItem(equipment, "Mic (Wired)", 1);
+            equipment = addItem(equipment, "Boom Stand", 1);
             channels++;
          }
 
@@ -171,23 +186,25 @@ const roles = [
       equip: ({singing, bringing, position}, channels, equipment) => {
          
          // always
-         equipment.musicStand++;
-         equipment.tsCable++;
-         equipment.diBox++;
+         equipment = addItem(equipment, "Music Stand", 1);
+         equipment = addItem(equipment, "1/4 TS Cable", 1);
+         equipment = addItem(equipment, "DI Box", 1);
          channels++;
 
          // depending on distance
-         const xlrLength = position === "far" ? "XLR (Long)" : "XLR";
-         equipment[xlrLength]++;
+         const xlrLength = position === "far" ? "XLR Cable (Long)" : "XLR Cable";
+         equipment = addItem(equipment, xlrLength, 1);
 
          if (singing) {
-            equipment[xlrLength]++;
-            equipment["Mic (Wired)"]++;
-            equipment["Boom Stand"]++;
+            equipment = addItem(equipment, xlrLength, 1);
+            equipment = addItem(equipment, "Mic (Wired)", 1);
+            equipment = addItem(equipment, "Boom Stand", 1);
             channels++;
          }
 
-         equipment.bass = bringing ? equipment.bass : 1;
+         if (!bringing) {
+            equipment = addItem(equipment, "Bass", 1);
+         }
 
          return [ channels, equipment ];
       }
@@ -203,13 +220,13 @@ const roles = [
       equip: ({position}, channels, equipment) => {
 
          // always
-         equipment["Music Stand"]++;
-         equipment["Boom Stand"]++;
+         equipment = addItem(equipment, "Music Stand", 1);
+         equipment = addItem(equipment, "Boom Stand", 1);
          channels++;
 
          // depending on distance
-         const xlrLength = position === "far" ? "XLR (Long)" : "XLR";
-         equipment[xlrLength]++;
+         const xlrLength = position === "far" ? "XLR Cable (Long)" : "XLR Cable";
+         equipment = addItem(equipment, xlrLength, 1);
 
          return [ channels, equipment ];
       }
@@ -219,30 +236,30 @@ const roles = [
       label: "Cajon",
       constraints: {
          singing: { checked: false, disabled: false },
-         bringing: { checked: false, disabled: true },
+         bringing: { checked: false, disabled: false },
          stereo: { checked: false, disabled: true }
       },
       equip: ({singing, bringing, position}, channels, equipment) => {
          
          // always
-         equipment["Music Stand"]++;
-         equipment["Boom Stand (Short)"]++;
-         equipment["Mic (Instrument)"]++;
+         equipment = addItem(equipment, "Music Stand", 1);
+         equipment = addItem(equipment, "Boom Stand (Short)", 1);
+         equipment = addItem(equipment, "Mic (Instrument)", 1);
          channels++;
          
          // depending on distance
-         const xlrLength = position === "far" ? "XLR (Long)" : "XLR";
-         equipment[xlrLength]++;
+         const xlrLength = position === "far" ? "XLR Cable (Long)" : "XLR Cable";
+         equipment = addItem(equipment, xlrLength, 1);
 
          if (singing) {
-            equipment[xlrLength]++;
-            equipment["Boom Stand"]++;
-            equipment["Mic (Wired)"]++;
+            equipment = addItem(equipment, xlrLength, 1);
+            equipment = addItem(equipment, "Boom Stand", 1);
+            equipment = addItem(equipment, "Mic (Wired)", 1);
             channels++;
          }
 
          if (!bringing) {
-            equipment["Cajon"] = 1;
+            equipment = addItem(equipment, "Cajon", 1);
          }
 
          return [ channels, equipment ];
@@ -259,13 +276,13 @@ const roles = [
       equip: ({position}, channels, equipment) => {
 
          // always
-         equipment["Mic (Wired)"]++;
-         equipment["Music Stand"]++;
+         equipment = addItem(equipment, "Mic (Wired)", 1);
+         equipment = addItem(equipment, "Music Stand", 1);
          channels++;
 
          // depending on distance
-         const xlrLength = position === "far" ? "XLR (Long)" : "XLR";
-         equipment[xlrLength]++;
+         const xlrLength = position === "far" ? "XLR Cable (Long)" : "XLR Cable";
+         equipment = addItem(equipment, xlrLength, 1);
 
          return [ channels, equipment ];
       }

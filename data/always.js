@@ -13,20 +13,30 @@ function equipAlways(channels, equipment) {
 
    // SOUND
 
+   equipment = addItem(equipment, "L-12 Mixer", 1);
+   equipment = addItem(equipment, "L-12 Mixer Power Cable", 1);
+
    // if using snake
-   equipment["Snake"] = 1;
+   equipment = addItem(equipment, "Audio Snake", 1);
 
    // for Main L/R
-   equipment["XLR"]++; 
-   equipment["XLR (Long)"]++;
+   equipment = addItem(equipment, "XLR Cable", 1);
+   equipment = addItem(equipment, "XLR Cable (Long)", 1);
 
    // for wedges
-   equipment["Wedge"] = 2;
-   equipment["XLR"] += 2;
-   equipment["Power Cable"] += 2;
+   equipment = addItem(equipment, "XLR Male to 1/4 TRS Adapter", 2);
+   equipment = addItem(equipment, "Wedge (Active)", 2);
+   equipment = addItem(equipment, "XLR Cable", 2);
+   equipment = addItem(equipment, "IEC Power Cable", 2);
 
    // for Macbook
-   channels += 2;
+   // add here
+   const checkboxMacbookStereo = document.querySelector('input[name="macbook_stereo[]"]');
+   if (checkboxMacbookStereo.checked) {
+      channels += 2;
+   } else {
+      channels++;
+   }
 
    return [ channels, equipment ];
 }
