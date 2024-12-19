@@ -114,7 +114,7 @@ function removeRow(button) {
 
    row.remove();
 
-   if (button.classList.contains('channel-controls')); {
+   if (button.classList.contains('channel-controls')) {
       numberChannels(tbody);
       listChannels(tbody);
    }
@@ -449,7 +449,7 @@ function populateChannelsList(selection, tbody) {
    const rearrangedRows = [];
 
    // find last far stereo instrument
-   let lastStereo = rowElements.filter(row => row.indexOf("far") !== -1 && row.indexOf("stereo" !== - 1));
+   let lastStereo = rowElements.filter(row => row.indexOf("far") !== -1 && row.indexOf("stereo") !== -1);
 
    if (lastStereo.length >= 2) {
       lastStereo = [lastStereo[lastStereo.length - 2], lastStereo[lastStereo.length - 1]];
