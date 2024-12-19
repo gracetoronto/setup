@@ -5,14 +5,13 @@ const locations = {
       // feel free to add more items if necessary
 
       // POWER
-      "Extension Cord": 0,
-      "Power Bar": 0,
+      "Power Bar": 1,
 
       // PROJECTION
       "Projector": 1,
-      "HDMI (Extended)": 0,
-      "HDMI": 0,
-      "USB-C Adapter": 1,
+      "USB-C Hub": 1,
+      "USB-A Hub": 1,
+      "Mini DisplayPort to HDMI Adapter": 1,
 
       // LIGHTING
       "Side Flood Lights": 4,
@@ -20,93 +19,86 @@ const locations = {
       "Stage Wash": 4,
       "DMX Transmitter": 1,
       "DMX Receiver": 6,
-      "USB to DMX Adapter": 1,
-      "USB-C Adapter": 1,
+      "USB to DMX Adapter": 1, // clarify what type of USB
+      "USB-C Adapter": 1, // clarify
       "Light Stand": 2,
 
       // SOUND
+
+      "L-12 Mixer": 1,
+      "L-12 Mixer Power Cable": 1, 
+      "Sound Cart": 1,
+
       // Cables
-      "XLR": 0,
-      "XLR (Long)": 0,
-      "TS Cable": 0,
-      "TS Cable (Long)": 0,
-      "Snake": 0,
+      "Audio Snake": 1,
+      "XLR Cable": 5,
+      "3.5mm TRS Cable": 1,
 
       // Mics
-      "Mic (Wireless)": 0,
-      "Mic (Wired)": 0,
-      "Mic (Instrument)": 0,
+      "Mic (Wireless)": 1,
+      "Mic (Wired)": 3,
+      "Mic (Instrument)": 1,
 
-      // DI
-      "DI Box": 0,
-      "DI Box (Dual)": 0,
-
-      // Monitors
-      "Wedge": 0,
-      "Power Cable": 0,
+      // DI and Adapters
+      "DI Box": 1,
+      "XLR Male to 1/4 TRS Adapter": 2,
+      "1/4 TRS to 3.5mm TRS Adapter": 1,
+      "USB-C to 3.5mm TRS Adapter": 1,
+      "USB-C to USB-A Adapter": 1,
+      "USB-B to USB-A Adapter": 1,
 
       // Stands
-      "Music Stand": 0,
-      "Boom Stand": 0,
-      "Boom Stand (Short)": 0,
-
-      // Instruments
-      "Acoustic Guitar": 0,
-      "Keyboard": 0,
-      "Bass": 0
+      "Music Stand": 1,
+      "Boom Stand": 2,
    },
 
    "Neighbours Hall": {
 
       // POWER
-      "Extension Cord": 0,
-      "Power Bar": 0,
+      "Extension Cord": 2,
+      "Power Bar": 5,
 
       // PROJECTION
-      "Projector": 0,
-      "HDMI (Extended)": 1,
-      "HDMI": 1,
-      "USB-C Adapter": 0,
-
-      // LIGHTING
-      "Side Flood Lights": 0,
-      "Stage PAR": 0,
-      "Stage Wash": 0,
-      "DMX Transmitter": 0,
-      "DMX Receiver": 0,
-      "USB to DMX Adapter": 0,
-      "USB-C Adapter": 0,
-      "Light Stand": 0,
+      "HDMI Cable": 3,
+      "HDMI Cable (Long)": 2,
+      "HDMI Extension": 3,
 
       // SOUND
       // Cables
-      "XLR": 0,
-      "XLR (Long)": 0,
-      "TS Cable": 0,
-      "TS Cable (Long)": 0,
-      "Snake": 0,
+      "XLR Cable": 15,
+      "XLR Cable (Long)": 10,
+      "1/4 TS Cable": 4,
 
       // Mics
-      "Mic (Wireless)": 0,
-      "Mic (Wired)": 0,
-      "Mic (Instrument)": 0,
+      "Mic (Wireless)": 1,
+      "Mic (Wired)": 6,
+      "Mic (Instrument)": 4,
+      "Mic (Drum)": 1,
 
-      // DI
-      "DI Box": 0,
-      "DI Box (Dual)": 0,
+      // DI and Adapters
+      "DI Box": 4,
+      "DI Box (Active)": 2,
+      "DI Box (Stereo)": 3,
+      "DI Box (USB)": 1,
+      "1/4 TRS to Dual 1/4 TS Adapter": 1,
+      "3.5mm TRS to XLR Adapter": 1,
+      "1/4 TRS to Dual XLR Adapter": 1,
 
       // Monitors
-      "Wedge": 0,
-      "Power Cable": 0,
+      "Wedge (Active)": 2,
+      "IEC Power Cable": 4,
 
       // Stands
-      "Music Stand": 0,
-      "Boom Stand": 0,
-      "Boom Stand (Short)": 0,
+      "Music Stand": 5,
+      "Boom Stand": 6,
+      "Boom Stand (Short)": 2,
+      "Laptop Stand": 1,
 
       // Instruments
-      "Acoustic Guitar": 0,
-      "Keyboard": 0,
-      "Bass": 0
+      "Acoustic Guitar": 1,
+      "Keyboard": 2,
+      "Keyboard Stand": 2,
+      "Bass": 1,
+      "Cajon": 1
    }
 }
