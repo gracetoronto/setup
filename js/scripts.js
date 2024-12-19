@@ -1,11 +1,25 @@
-// max channels
-// empty states
-// alert (out of date)
-// wireless mics
-// need to check if item exists in location
-// need to check if item exists in equipment when adding quantities
-// set equipment variable based on keys of inventories
-// on channel field change
+// High prio
+   // wireless mics
+   // need to check if item exists in location
+   // finish always
+   // on channel instrument field change
+   // equipment per musician
+   // substitute
+      // wireless mics
+      // passive DI -> active DI -> stereo DI
+      // stereo DI -> passive DI x2 -> passive DI, active DI -> active DI x2
+      // XLR -> XLR (Long)
+      // XLR (Long) -> XLR x2
+   // add cables for macbook audio
+
+// Low prio
+   // max channels
+   // empty states
+   // alert (changes made, submit again)
+   // add channel
+   // limit to max channels?
+   // clarify USB names
+
 
 // elements
 const rolesTable = document.getElementById('roles-table').getElementsByTagName('tbody')[0];
@@ -14,59 +28,7 @@ const rolesTable = document.getElementById('roles-table').getElementsByTagName('
 // global variables
 let selection = [];
 let channels = 0;
-let equipment = {
-
-      // POWER
-      "Extension Cord": 0,
-      "Power Bar": 0,
-
-      // PROJECTION
-      "Projector": 0,
-      "HDMI (Extended)": 0,
-      "HDMI": 0,
-      "USB-C Adapter": 0,
-
-      // LIGHTING
-      "Side Flood Lights": 0,
-      "Stage PAR": 0,
-      "Stage Wash": 0,
-      "DMX Transmitter": 0,
-      "DMX Receiver": 0,
-      "USB to DMX Adapter": 0,
-      "USB-C Adapter": 0,
-      "Light Stand": 0,
-
-      // SOUND
-      // Cables
-      "XLR": 0,
-      "XLR (Long)": 0,
-      "TS Cable": 0,
-      "TS Cable (Long)": 0,
-      "Snake": 0,
-
-      // Mics
-      "Mic (Wireless)": 0,
-      "Mic (Wired)": 0,
-      "Mic (Instrument)": 0,
-
-      // DI
-      "DI Box": 0,
-      "DI Box (Dual)": 0,
-
-      // Monitors
-      "Wedge": 0,
-      "Power Cable": 0,
-
-      // Stands
-      "Music Stand": 0,
-      "Boom Stand": 0,
-      "Boom Stand (Short)": 0,
-
-      // Instruments
-      "Acoustic Guitar": 0,
-      "Keyboard": 0,
-      "Bass": 0
-}
+let equipment = {};
 
 function createRoleOptions(roles) {
    const optionElements = roles.map(role => `<option value="${role.name}">${role.label}</option>`);
@@ -197,23 +159,25 @@ function updateSelection(rolesTable) {
 function resetEquipment(equipment) {
 
    channels = 0;
-
-   Object.keys(equipment).forEach(item => {
-      equipment[item] = 0;
-   });
+   equipment = {};
 
    return [channels, equipment];
 }
 
 function getEquipmentDiff(obj1, obj2) {
+   
    const differences = {};
+   let difference;
 
    for (const key in obj1) {
       if (Object.prototype.hasOwnProperty.call(obj2, key) && typeof obj1[key] === 'number' && typeof obj2[key] === 'number') {
-         const difference = obj1[key] - obj2[key];
-         if (difference !== 0) {
-            differences[key] = difference;
-         }
+         difference = obj1[key] - obj2[key];
+      } else {
+         difference = obj1[key];
+      }
+
+      if (difference > 0) {
+         differences[key] = difference;
       }
    }
 
@@ -353,11 +317,8 @@ function listChannels(tbody) {
    // remove any existing list
    let existingListHeading = section.querySelector('h3');
    if (existingListHeading) { existingListHeading.remove(); }
-
-
    let existingList = section.querySelector('ol');
    if (existingList) { existingList.remove(); }
-
 
    // create <li> elements from rows
    const populatedRows = Array.from(tbody.querySelectorAll('tr'));
@@ -382,7 +343,7 @@ function listChannels(tbody) {
    return newList;
 }
 
-function populateChannelsList(selection, tbody) {
+function populateChannels(selection, tbody) {
 
    const cellActions = `
       <td class="cell-actions-sm">
@@ -572,9 +533,6 @@ function populateChannelsList(selection, tbody) {
    });
 
    // add channel numbers
-
-
-
    numberChannels(tbody);
 
    return listChannels(tbody);
@@ -602,7 +560,7 @@ function handleChange() {
    // list channels
    const channelsTBody = document.querySelector('#channels-table>tbody');
    resetTBody(channelsTBody);
-   console.log(populateChannelsList(selection, channelsTBody));
+   console.log(populateChannels(selection, channelsTBody));
 
    // calculate equipment needed from each location
 }
