@@ -1,17 +1,12 @@
 // High prio
    // wireless mics
-   // need to check if item exists in location
    // finish always
    // on channel instrument field change
    // equipment per musician
-   // substitute
-      // wireless mics
-      // passive DI -> active DI -> stereo DI
-      // stereo DI -> passive DI x2 -> passive DI, active DI -> active DI x2
-      // XLR -> XLR (Long)
-      // XLR (Long) -> XLR x2
    // add cables for macbook audio
    // channel quantity
+   // not enough equipment
+   // locationNeeds list
 
 // Low prio
    // max channels
@@ -229,9 +224,6 @@ function calcEquipment(equipAlways, selection, instruments, channels, equipment)
       }
    }
 
-   console.log("Channels:");
-   console.log(channels);
-
    console.log("Equipment:");
    console.log(equipment);
 
@@ -240,17 +232,17 @@ function calcEquipment(equipAlways, selection, instruments, channels, equipment)
 
 function sourceEquipment(equipment, locations) {
 
-   const locs = {...locations};
-   const eq = {...equipment};
+   const locs = JSON.parse(JSON.stringify(locations));
+   const eq = JSON.parse(JSON.stringify(equipment));
    const needs = {};
 
    // for each location
-   for (let [locName, locInventory] in locs) {
+   for (let [locName, locInventory] of Object.entries(locs)) {
 
       needs[locName] = {};
       
       // for each piece of equipment
-      for (let [eqItem, eqQty] in eq) {
+      for (let [eqItem, eqQty] of Object.entries({...eq})) {
          
          // only if needed
          if (eqQty && eqQty > 0) {
@@ -265,7 +257,7 @@ function sourceEquipment(equipment, locations) {
                   needs[locName][eqItem] = eqQty;
    
                   // don't need any more equipment
-                  eq[eqItem] = 0;
+                  delete eq[eqItem];
    
                   // remaining quantity of equipment at location
                   locs[locName][eqItem] = diff;
@@ -276,7 +268,7 @@ function sourceEquipment(equipment, locations) {
                   needs[locName][eqItem] = eqQty;
    
                   // don't need any more equipment
-                  eq[eqItem] = 0;
+                  delete eq[eqItem];
    
                   // no more equipment at location
                   locs[locName][eqItem] = 0;
@@ -295,11 +287,105 @@ function sourceEquipment(equipment, locations) {
             }
          }
       }
+   }
 
-      // go through locations again and substitute items
+   // loop through remaining items needed
+   for (let [eqItem, eqQty] of Object.entries({...eq})) {
 
-      console.log('Needs:');
-      console.log(needs);
+      // still need equipment
+      if (eqQty && eqQty > 0) {
+
+         // substitutes available
+         if (substitutes[eqItem]) {
+            
+            // loop through substitutes
+            substitutes[eqItem].forEach(sub => {
+
+               // loop through location inventories to find substitute
+               for (let [locName, locInventory] of Object.entries(locs)) {
+               
+                  if (locInventory[sub.item]) {
+
+                     const diff = locInventory[sub.item] - eqQty * sub.quantity;
+                  
+                     if (diff > 0) {
+                        
+                        // need equipment from this location
+                        needs[locName][sub.item] = eqQty * sub.quantity;
+
+                        // don't need any more equipment
+                        delete eq[eqItem];
+
+                        // remaining quantity of equipment at location
+                        locs[locName][sub.item] = diff;
+
+                     } else if (diff === 0) {
+
+                        // need equipment from this location
+                        needs[locName][sub.item] = eqQty * sub.quantity;
+
+                        // don't need any more equipment
+                        delete eq[eqItem];
+
+                        // no more equipment at location
+                        locs[locName][sub.item] = 0;
+
+                     } else if (diff < 0) {
+
+                        // need equipment from this location
+                        needs[locName][sub.item] = locs[locName][sub.item];
+
+                        // need more equipment still
+                        eqQty = -diff;
+
+                        // no more equipment at location
+                        locs[locName][sub.item] = 0;
+                     }
+                  }
+               }
+            });
+         }
+      }
+   }
+   
+   console.log("Needs:");
+   console.log(needs);
+
+   return needs;
+}
+
+function populateEquipmentTable(tbody, locationNeeds) {
+
+   // clear table
+   resetTBody(tbody);
+
+   // populate table
+   for (let [item, qty] of Object.entries(locationNeeds)) {
+
+      const row = `
+         <tr>
+            <td class="cell-lg">${item}</td>
+            <td class="cell-sm">${qty}</td>
+         </tr>
+      `;
+
+      tbody.innerHTML += row;
+   }
+
+}
+
+function populateEquipment(needs) {
+
+   const tableIds = {
+      "St. Andrew's Hall": "st-andrews-hall-table",
+      "Neighbours Hall": "neighbours-hall-table"
+   };
+
+   for (let [location, locationNeeds] of Object.entries(needs)) {
+   
+      const tbody = document.getElementById(tableIds[location]).getElementsByTagName('tbody')[0];
+      populateEquipmentTable(tbody, locationNeeds);
+
    }
 }
 
@@ -543,7 +629,19 @@ function populateChannels(selection, tbody) {
    // add channel numbers
    numberChannels(tbody);
 
-   return listChannels(tbody);
+   // display list
+   listChannels(tbody);
+
+   // build channels array
+   const channelsArr = Array.from(tbody.children).map((row, index) => {
+      return {
+         channelNumber: index + 1,
+         micOrInstrument: row.querySelector('input').value
+      };
+   });
+
+   console.log("Channels:");
+   console.log(channelsArr);
 }
 
 function handleChange() {
@@ -568,9 +666,10 @@ function handleChange() {
    // list channels
    const channelsTBody = document.querySelector('#channels-table>tbody');
    resetTBody(channelsTBody);
-   console.log(populateChannels(selection, channelsTBody));
+   populateChannels(selection, channelsTBody);
 
-   // calculate equipment needed from each location
+   // source equipment needed from each location
+   populateEquipment(sourceEquipment(equipment, locations));
 }
 
 addRow();
