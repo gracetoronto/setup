@@ -38,30 +38,30 @@ function addRow() {
    const newRow = rolesTable.insertRow();
 
    newRow.innerHTML = `
-      <td class="cell-lg">
+      <td class="cell-lg cell-center">
          <input type="text" name="name[]" placeholder="Enter Name" style="width: 100%;" maxlength="20">
       </td>
-      <td class="cell-md">
+      <td class="cell-md cell-center">
          <input type="checkbox" name="singing[]" value="yes" checked disabled>
       </td>
-      <td class="cell-md">
+      <td class="cell-md cell-center">
          <select name="instrument[]" onchange="handleInstrumentChange(this)">
             ${createInstrumentOptions(instruments)}
          </select>
       </td>
-      <td class="cell-sm">
+      <td class="cell-sm cell-center">
          <input type="checkbox" name="bringing[]" value="yes" disabled>
       </td>
-      <td class="cell-sm">
+      <td class="cell-sm cell-center">
          <input type="checkbox" name="stereo[]" value="yes" disabled>
       </td>
-      <td class="cell-sm">
+      <td class="cell-sm cell-center">
          <select name="position[]">
             <option value="near">Near</option>
             <option value="far">Far</option>
          </select>
       </td>
-      <td class="cell-actions-sm">
+      <td class="cell-actions-sm cell-center">
          <button type="button" onclick="moveRowUp(this)">&uarr;</button>
          <button type="button" onclick="moveRowDown(this)">&darr;</button>
          <button type="button" onclick="removeRow(this)">–</button>
