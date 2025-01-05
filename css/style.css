@@ -104,6 +104,19 @@ td {
    flex-basis: 5%;
 }
 
+.cell-channel {
+   flex-direction: column;
+   row-gap: 0.5rem;
+   font-size: 0.875rem;
+}
+
+.cell-channel ul {
+   margin-top: 0;
+   margin-bottom: 0;
+   margin-left: -1.25rem;
+   margin-right: 0;
+}
+
 .cell-actions {
    width: 10.5rem;
 }
@@ -160,6 +173,7 @@ button {
 td > button {
    font-size: 14px;
    padding: 4px 8px;
+   height: fit-content;
 }
 
 #list {

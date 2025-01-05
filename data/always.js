@@ -1,8 +1,10 @@
 function equipAlways(channels, equipment) {
 
-   // Sean or Josh: could you add the equipment we need every time with the following syntax:
-   // equipment["Item Name"]++; <-- to add one
-   // equipment["Item Name"] += 2; <-- to add multiple
+   // Sean or Josh – could you add the equipment we need every time with the following syntax:
+   // equipment = addItem(equipment, "Item Name", quantity);
+
+   // to add one: equipment = addItem(equipment, "Item Name", 1);
+   // to add three: equipment = addItem(equipment, "Item Name", 1);
    // item names should correspond to inventory.js
 
    // POWER
@@ -24,18 +26,24 @@ function equipAlways(channels, equipment) {
    equipment = addItem(equipment, "XLR Cable (Long)", 1);
 
    // for wedges
-   equipment = addItem(equipment, "XLR Male to 1/4 TRS Adapter", 2);
+   equipment = addItem(equipment, "XLR-M to 1/4 TRS-M Adapter", 2);
    equipment = addItem(equipment, "Wedge (Active)", 2);
    equipment = addItem(equipment, "XLR Cable", 2);
    equipment = addItem(equipment, "IEC Power Cable", 2);
 
    // for Macbook
-   // add here
    const checkboxMacbookStereo = document.querySelector('input[name="macbook_stereo[]"]');
+   
    if (checkboxMacbookStereo.checked) {
-      channels += 2;
+
+      // add equipment
+
+      channels.push({ label: "Macbook L" }, { label: "Macbook R" });
    } else {
-      channels++;
+
+      // add equipment
+
+      channels.push({ label: "Macbook" });
    }
 
    return [ channels, equipment ];

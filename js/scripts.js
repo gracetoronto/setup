@@ -1,33 +1,67 @@
 // High prio
-   // wireless mics
-   // finish always
-   // on channel instrument field change
-   // equipment per musician
-   // add cables for macbook audio
-   // channel quantity
-   // not enough equipment
-   // locationNeeds list
+// wireless mics
+// finish always
+// on channel instrument field change
+// add cables for macbook audio
+// not enough equipment
+// equipment lists
 
 // Low prio
-   // max channels
-   // alert (changes made, submit again)
-   // add channel
-   // clarify USB names
+// channel quantity
+// max channels
+// alert (changes made, submit again)
+// clarify adapter M/F connectors in inventory, always, and instruments
+// query string
 
 
 // elements
 const rolesTable = document.getElementById('roles-table').getElementsByTagName('tbody')[0];
 
-
-// global variables
+// global variables and values
 let selection = [];
-let channels = 0;
+let channels = [];
 let equipment = {};
+
+const maxChannels = 12;
+
+
+// add event listeners
+
+const labels = Array.from(document.querySelectorAll('input[type="checkbox"] + label'));
+labels.forEach(label => {
+   label.addEventListener('click', handleLabelClick);
+});
+
+
+// event helpers
 
 function createInstrumentOptions(instruments) {
    const optionElements = instruments.map(instr => `<option value="${instr.name}">${instr.label}</option>`);
    return optionElements.join('');
 }
+
+function moveArrayElem(array, fromIndex, direction) {
+   const toIndex = direction === "up" ? fromIndex - 1 : fromIndex + 1;
+
+   // Ensure indices are within bounds
+   if (toIndex < 0 || toIndex >= array.length) {
+      console.error("Index out of bounds");
+      return array;
+   }
+
+   // Swap elements
+   [array[fromIndex], array[toIndex]] = [array[toIndex], array[fromIndex]];
+   return array;
+}
+
+function getChildIndex(element) {
+   const parent = element.parentNode;
+   const children = Array.from(parent.children); // Convert HTMLCollection to Array
+   return children.indexOf(element);
+}
+
+
+// events
 
 function addRow() {
    const newRow = rolesTable.insertRow();
@@ -68,11 +102,19 @@ function removeRow(button) {
    const row = button.closest('tr');
    const tbody = button.closest('tbody');
 
+   // get index
+   const index = parseInt(row.getAttribute('chan-index'));
+
    row.remove();
 
    if (button.classList.contains('channel-controls')) {
+
       numberChannels(tbody);
-      listChannels(tbody);
+
+      // update channels
+      channels.splice(index, 1);
+
+      populateChannelsList(channels, tbody);
    }
 
 }
@@ -82,12 +124,20 @@ function moveRowUp(button) {
    const tbody = button.closest('tbody');
    const previousRow = row.previousElementSibling;
 
+   // get index
+   const index = parseInt(row.getAttribute('chan-index'));
+
    if (previousRow) {
       row.parentNode.insertBefore(row, previousRow);
 
       if (button.classList.contains('channel-controls')) {
+
          numberChannels(tbody);
-         listChannels(tbody);
+
+         // update channels
+         channels = moveArrayElem(channels, index, "up");
+
+         populateChannelsList(channels, tbody);
       }
    }
 }
@@ -97,12 +147,20 @@ function moveRowDown(button) {
    const tbody = button.closest('tbody');
    const nextRow = row.nextElementSibling;
 
+   // get index
+   const index = parseInt(row.getAttribute('chan-index'));
+
    if (nextRow) {
       row.parentNode.insertBefore(nextRow, row);
 
       if (button.classList.contains('channel-controls')) {
+
          numberChannels(tbody);
-         listChannels(tbody);
+
+         // update channels
+         channels = moveArrayElem(channels, index, "down");
+
+         populateChannelsList(channels, tbody);
       }
    }
 }
@@ -112,11 +170,6 @@ function handleLabelClick(e) {
    const checkbox = fieldset.querySelector('input[type="checkbox"]');
    checkbox.checked = !checkbox.checked;
 }
-const labels = Array.from(document.querySelectorAll('input[type="checkbox"] + label'));
-labels.forEach(label => {
-   label.addEventListener('click', handleLabelClick);
-});
-
 
 function handleInstrumentChange(select) {
    const row = select.closest('tr');
@@ -136,6 +189,9 @@ function handleInstrumentChange(select) {
    stereo.disabled = constraints.stereo.disabled;
 }
 
+
+// selection
+
 function updateSelection(rolesTable) {
    const rows = Array.from(rolesTable.querySelectorAll('tr'));
    return rows.map(row => {
@@ -150,71 +206,45 @@ function updateSelection(rolesTable) {
    });
 }
 
-function resetEquipment(equipment) {
 
-   channels = 0;
-   equipment = {};
+// equipment
 
-   return [channels, equipment];
-}
+function addEquipment({ channels, equipment, musician, equip }) {
 
-function getEquipmentDiff(obj1, obj2) {
-   
-   const differences = {};
-   let difference;
-
-   for (const key in obj1) {
-      if (Object.prototype.hasOwnProperty.call(obj2, key) && typeof obj1[key] === 'number' && typeof obj2[key] === 'number') {
-         difference = obj1[key] - obj2[key];
-      } else {
-         difference = obj1[key];
-      }
-
-      if (difference > 0) {
-         differences[key] = difference;
-      }
-   }
-
-   return differences;
-}
-
-function addEquipment(channels, equipment, equip, name, instrument) {
-
-   const equipmentBefore = { ...equipment };
-   const channelsBefore = channels;
-
-   [channels, equipment] = equip(channels, equipment);
-
-   const log = { equipment: getEquipmentDiff(equipment, equipmentBefore), channels: channels - channelsBefore };
-   if (instrument) { log.name = name; log.instrument = instrument; }
-   console.log(log);
+   [channels, equipment] = equip(channels, equipment, musician);
 
    return [channels, equipment];
 }
 
-function calcEquipment(equipAlways, selection, instruments, channels, equipment) {
+function calcEquipment({ equipAlways, selection, instruments, channels, equipment }) {
 
    // always add this equipment
-   console.log("Always:");
-   [channels, equipment] = addEquipment(channels, equipment, equipAlways);
 
-   console.log("Musicians:");
+   [channels, equipment] = addEquipment({ channels: channels, equipment: equipment, equip: equipAlways });
+
+   // musicians
+
    selection.forEach(musician => {
 
       const instrument = instruments.find(instr => instr.name === musician.instrument);
 
-      [channels, equipment] = addEquipment(channels, equipment, (channels, equipment) => {
+      [channels, equipment] = addEquipment({
+         channels: channels,
+         equipment: equipment,
+         musician: musician,
+         equip: (channels, equipment, musician) => {
 
-         [channels, equipment] = instrument.equip({
-            singing: musician.singing,
-            bringing: musician.bringing,
-            stereo: musician.stereo,
-            position: musician.position
-         }, channels, equipment);
+            [channels, equipment] = instrument.equip({
+               singing: musician.singing,
+               bringing: musician.bringing,
+               stereo: musician.stereo,
+               position: musician.position
+            }, channels, equipment, musician);
 
-         return [channels, equipment];
+            return [channels, equipment];
 
-      }, musician.name, musician.instrument);
+         }
+      });
    });
 
    // remove properties that equal 0
@@ -240,47 +270,47 @@ function sourceEquipment(equipment, locations) {
    for (let [locName, locInventory] of Object.entries(locs)) {
 
       needs[locName] = {};
-      
+
       // for each piece of equipment
-      for (let [eqItem, eqQty] of Object.entries({...eq})) {
-         
+      for (let [eqItem, eqQty] of Object.entries({ ...eq })) {
+
          // only if needed
          if (eqQty && eqQty > 0) {
 
             if (locInventory[eqItem]) {
 
                const diff = locInventory[eqItem] - eqQty;
-            
+
                if (diff > 0) {
-                  
+
                   // need equipment from this location
                   needs[locName][eqItem] = eqQty;
-   
+
                   // don't need any more equipment
                   delete eq[eqItem];
-   
+
                   // remaining quantity of equipment at location
                   locs[locName][eqItem] = diff;
-   
+
                } else if (diff === 0) {
-   
+
                   // need equipment from this location
                   needs[locName][eqItem] = eqQty;
-   
+
                   // don't need any more equipment
                   delete eq[eqItem];
-   
+
                   // no more equipment at location
                   locs[locName][eqItem] = 0;
-   
+
                } else if (diff < 0) {
-   
+
                   // need equipment from this location
                   needs[locName][eqItem] = locs[locName][eqItem];
-   
+
                   // need more equipment still
                   eq[eqItem] = -diff;
-   
+
                   // no more equipment at location
                   locs[locName][eqItem] = 0;
                }
@@ -290,26 +320,26 @@ function sourceEquipment(equipment, locations) {
    }
 
    // loop through remaining items needed
-   for (let [eqItem, eqQty] of Object.entries({...eq})) {
+   for (let [eqItem, eqQty] of Object.entries({ ...eq })) {
 
       // still need equipment
       if (eqQty && eqQty > 0) {
 
          // substitutes available
          if (substitutes[eqItem]) {
-            
+
             // loop through substitutes
             substitutes[eqItem].forEach(sub => {
 
                // loop through location inventories to find substitute
                for (let [locName, locInventory] of Object.entries(locs)) {
-               
+
                   if (locInventory[sub.item]) {
 
                      const diff = locInventory[sub.item] - eqQty * sub.quantity;
-                  
+
                      if (diff > 0) {
-                        
+
                         // need equipment from this location
                         needs[locName][sub.item] = eqQty * sub.quantity;
 
@@ -347,7 +377,7 @@ function sourceEquipment(equipment, locations) {
          }
       }
    }
-   
+
    console.log("Needs:");
    console.log(needs);
 
@@ -356,8 +386,8 @@ function sourceEquipment(equipment, locations) {
 
 function populateEquipmentTable(tbody, locationNeeds) {
 
-   // clear table
-   resetTBody(tbody);
+   // reset table
+   tbody.innerHTML = "";
 
    // populate table
    for (let [item, qty] of Object.entries(locationNeeds)) {
@@ -382,267 +412,138 @@ function populateEquipment(needs) {
    };
 
    for (let [location, locationNeeds] of Object.entries(needs)) {
-   
+
       const tbody = document.getElementById(tableIds[location]).getElementsByTagName('tbody')[0];
       populateEquipmentTable(tbody, locationNeeds);
 
    }
 }
 
-function resetTBody(tbody) {
-   tbody.innerHTML = "";
-}
+
+// channels
 
 function numberChannels(tbody) {
    const rowNodes = Array.from(tbody.querySelectorAll('tr>td.cell-sm'));
    rowNodes.forEach((node, index) => {
       node.innerText = `${index + 1}.`;
+      node.closest('tr').setAttribute('chan-index', index);
    });
 }
 
-function listChannels(tbody) {
+function populateChannelsList(channels, tbody) {
 
    const section = tbody.closest('section');
 
-   // remove any existing list
+   // reset list
    let existingListHeading = section.querySelector('h3');
    if (existingListHeading) { existingListHeading.remove(); }
    let existingList = section.querySelector('ol');
    if (existingList) { existingList.remove(); }
 
-   // create <li> elements from rows
-   const populatedRows = Array.from(tbody.querySelectorAll('tr'));
-
-   const listElements = populatedRows.map(row => {
-      return `
-            <li>${row.querySelector('td>input').value}</li>
-         `;
-   });
+   // create <li> elements
+   const listItems = channels.map((chan, index) => `
+      <li chan-data='${JSON.stringify(chan)}' chan-index='${index}'>
+         ${chan.label}${chan.musician ? (chan.musician.name ? ` (${chan.musician.name})` : ``) : ``}
+      </li>
+   `);
 
    // create <ol> from array
-   const newList = `
+   const list = `
          <h3>Channels List</h3>
          <ol id="channels-list">
-            ${listElements.join("")}
+            ${listItems.join("")}
          </ol>
       `;
 
    // append <ol> to channels-section
-   section.innerHTML += newList;
+   section.innerHTML += list;
 
-   return newList;
+   return list;
 }
 
-function populateChannels(selection, tbody) {
+function reorderChannels(channels) {
 
-   const cellActions = `
-      <td class="cell-actions-sm">
-         <button class="channel-controls" type="button" onclick="moveRowUp(this)">&uarr;</button>
-         <button class="channel-controls" type="button" onclick="moveRowDown(this)">&darr;</button>
-         <button class="channel-controls" type="button" onclick="removeRow(this)">&ndash;</button>
-      </td>
-   `;
+   const orderedChannels = [];
 
-   let channelCounter = 1;
-   let rowElements = selection.map((musician) => {
+   // take out end channels
+   const endFilter = chan => chan.label.indexOf("Macbook") !== -1;
+   const endChannels = channels.filter(endFilter);
+   channels = channels.filter(chan => !endFilter(chan));
 
-      let instrumentLabel = instruments.find(instr => instr.name === musician.instrument).label;
+   // add channels in this order
+   const filters = [
+      // near mics
+      chan => (chan.label === "Mic" && chan.musician.position === "near"),
+      // far mics
+      chan => (chan.label === "Mic" && chan.musician.position === "far"),
+      // near instruments
+      chan => (chan.musician.position === "near"),
+      // all other instruments
+      chan => (chan => true)
+   ];
 
-      if (instrumentLabel === "None") {
-         instrumentLabel = "Mic";
-      }
-
-      let rowCode = `
-         <tr class="instr-${musician.instrument} position-${musician.position} ${musician.stereo ? `stereo` : ``}">
-            <td class="cell-sm">
-            </td>
-            <td class="cell-lg">
-               <input type="text" value="${instrumentLabel}${musician.stereo ? ` L` : ``}${musician.name ? ` (${musician.name})` : ``}">
-            </td>
-            ${cellActions}
-         </tr>
-         ${musician.stereo ? `
-            <!-- split -->
-            <tr class="instr-${musician.instrument} position-${musician.position} ${musician.stereo ? `stereo` : ``}">
-               <td class="cell-sm">
-               </td>
-               <td class="cell-lg">
-                  <input type="text" value="${instrumentLabel} R${musician.name ? ` (${musician.name})` : ``}">
-               </td>
-               ${cellActions}
-            </tr>
-         ` : ``}
-      `;
-
-      channelCounter++;
-
-      if (musician.stereo) {
-         channelCounter++;
-      }
-
-      if (musician.singing && musician.instrument !== "none" && musician.instrument !== "speaker") {
-         rowCode += `
-            <!-- split -->
-            <tr class="instr-none position-${musician.position}">
-               <td class="cell-sm">
-               </td>
-               <td class="cell-lg">
-                  <input type="text" value="Mic${musician.name ? ` (${musician.name})` : ``}">
-               </td>
-               ${cellActions}
-            </tr>
-         `;
-      }
-
-      return rowCode;
+   filters.forEach((filter, i) => {
+      orderedChannels.push(...channels.filter(filters[i]));
+      channels = channels.filter(chan => !filters[i](chan));
    });
 
-   // split rows properly
-   rowElements = rowElements.join('<!-- split -->').split('<!-- split -->');
+   // add end channels
+   orderedChannels.push(...endChannels);
 
-   // rearrange rows
-   const rearrangedRows = [];
+   // add extra channels
+   while (orderedChannels.length < maxChannels) {
+      orderedChannels.push({ label: "" });
+   }
 
-   // find last far stereo instrument
-   let lastStereo = rowElements.filter(row => row.indexOf("far") !== -1 && row.indexOf("stereo") !== -1);
+   return orderedChannels;
+}
 
-   if (lastStereo.length >= 2) {
-      lastStereo = [lastStereo[lastStereo.length - 2], lastStereo[lastStereo.length - 1]];
+function populateChannelsTable(channels, tbody) {
 
-      rowElements.forEach((row, index) => {
-         if (row === lastStereo[0]) {
-            rowElements = rowElements.slice(0, index).concat(rowElements.slice(index + 1));
+   // reset table
+   tbody.innerHTML = "";
+
+   // create <row> elements
+   const rows = channels.map((chan, index) => {
+
+      const equipmentListItems = [];
+
+      if (chan.equipment) {
+         for (let [item, qty] of Object.entries(chan.equipment)) {
+            equipmentListItems.push(`<li>${item} x${qty}</li>`);
          }
-      });
-
-      rowElements.forEach((row, index) => {
-         if (row == lastStereo[1]) {
-            rowElements = rowElements.slice(0, index).concat(rowElements.slice(index + 1));
-         }
-      });
-
-   } else {
-      lastStereo = rowElements.filter(row => row.indexOf("stereo") !== -1);
-
-      if (lastStereo.length >= 2) {
-         lastStereo = [lastStereo[lastStereo.length - 2], lastStereo[lastStereo.length - 1]];
-
-         rowElements.forEach((row, index) => {
-            if (row == lastStereo[0]) {
-               rowElements = rowElements.slice(0, index).concat(rowElements.slice(index + 1));
-            }
-         });
-
-         rowElements.forEach((row, index) => {
-            if (row == lastStereo[1]) {
-               rowElements = rowElements.slice(0, index).concat(rowElements.slice(index + 1));
-            }
-         });
       }
-   }
 
-   // if no far stereo instruments, find last stereo instrument
-
-   // // add speaker first
-   // rearrangedRows.push(...rowElements.filter(row => row.indexOf("role-speaker") !== -1));
-   // rowElements = rowElements.filter(row => row.indexOf("role-speaker") === -1);
-
-   // then add near vocal channels
-   rearrangedRows.push(...rowElements.filter(row => row.indexOf("instr-none") !== -1 && row.indexOf("position-near") !== -1));
-   rowElements = rowElements.filter(row => (row.indexOf("instr-none") === -1 || row.indexOf("position-near") === -1));
-
-   // then add far vocal channels
-   rearrangedRows.push(...rowElements.filter(row => row.indexOf("instr-none") !== -1));
-   rowElements = rowElements.filter(row => row.indexOf("instr-none") === -1);
-
-   // then add near instruments
-   rearrangedRows.push(...rowElements.filter(row => row.indexOf("position-near") !== -1));
-   rowElements = rowElements.filter(row => row.indexOf("position-near") === -1);
-
-   // then add far instruments
-   rearrangedRows.push(...rowElements);
-
-   // if odd number of channels
-   if (rearrangedRows.length % 2 !== 0 && lastStereo.length >= 2 && rearrangedRows.length >= 7) {
-      rearrangedRows.push(`
-         <tr>
+      return `
+         <tr chan-data='${JSON.stringify(chan)}' chan-index='${index}'>
             <td class="cell-sm">
             </td>
-            <td class="cell-lg">
-               <input type="text" value="">
+            <td class="cell-lg cell-channel">
+               <input type="text" value="${chan.label}${chan.musician ? (chan.musician.name ? ` (${chan.musician.name})` : ``) : ``}">
+               ${equipmentListItems.length > 0 ? `<ul>${equipmentListItems.join('')}</ul>` : ``}
             </td>
-            ${cellActions}
+            <td class="cell-actions-sm">
+               <button class="channel-controls" type="button" onclick="moveRowUp(this)">&uarr;</button>
+               <button class="channel-controls" type="button" onclick="moveRowDown(this)">&darr;</button>
+               <button class="channel-controls" type="button" onclick="removeRow(this)">&ndash;</button>
+            </td>
          </tr>
-      `);
-   }
-
-   // then add last stereo instrument
-   if (lastStereo.length >= 2) {
-      rearrangedRows.push(...lastStereo);
-   }
-
-   // add empty channels
-   const macbookStereo = document.querySelector('input[name="macbook_stereo[]"]');
-   while (rearrangedRows.length < 8 && macbookStereo.checked) {
-      rearrangedRows.push(`
-         <tr>
-            <td class="cell-sm">
-            </td>
-            <td class="cell-lg">
-               <input type="text" value="">
-            </td>
-            ${cellActions}
-         </tr>
-      `);
-   }
-
-   // then add Macbook
-   rearrangedRows.push(`
-      <tr>
-         <td class="cell-sm">
-         </td>
-         <td class="cell-lg">
-            <input type="text" value="Macbook${macbookStereo.checked ? ` L` : ` Mono`}">
-         </td>
-         ${cellActions}
-      </tr>
-   `);
-
-   if (macbookStereo.checked) {
-      rearrangedRows.push(`
-         <tr>
-            <td class="cell-sm">
-            </td>
-            <td class="cell-lg">
-               <input type="text" value="Macbook R">
-            </td>
-            ${cellActions}
-         </tr>
-      `);
-   }
+      `;
+   });
 
    // append rows
-   rearrangedRows.forEach(row => {
+   rows.forEach(row => {
       tbody.innerHTML += row;
    });
 
    // add channel numbers
    numberChannels(tbody);
 
-   // display list
-   listChannels(tbody);
-
-   // build channels array
-   const channelsArr = Array.from(tbody.children).map((row, index) => {
-      return {
-         channelNumber: index + 1,
-         micOrInstrument: row.querySelector('input').value
-      };
-   });
-
    console.log("Channels:");
-   console.log(channelsArr);
+   console.log(channels);
 }
+
+// handle change
 
 function handleChange() {
 
@@ -657,19 +558,32 @@ function handleChange() {
 
    // reset equipment
    console.clear();
-   [channels, equipment] = resetEquipment(equipment);
+   channels = [];
+   equipment = {};
 
    // calculate equipment needed
    console.log("EQUIPMENT LIST");
-   [channels, equipment] = calcEquipment(equipAlways, selection, instruments, channels, equipment);
+   [channels, equipment] = calcEquipment({
+      equipAlways: equipAlways,
+      selection: selection,
+      instruments: instruments,
+      channels: channels,
+      equipment: equipment
+   });
 
-   // list channels
+   // reorder channels
+   channels = reorderChannels(channels);
+
+   // populate channels table and list
    const channelsTBody = document.querySelector('#channels-table>tbody');
-   resetTBody(channelsTBody);
-   populateChannels(selection, channelsTBody);
+   populateChannelsTable(channels, channelsTBody);
+   populateChannelsList(channels, channelsTBody);
 
    // source equipment needed from each location
    populateEquipment(sourceEquipment(equipment, locations));
 }
+
+
+// at startup
 
 addRow();

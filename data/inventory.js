@@ -41,7 +41,7 @@ const locations = {
 
       // DI and Adapters
       "DI Box": 1,
-      "XLR Male to 1/4 TRS Adapter": 2,
+      "XLR-M to 1/4 TRS-M Adapter": 2,
       "1/4 TRS to 3.5mm TRS Adapter": 1,
       "USB-C to 3.5mm TRS Adapter": 1,
       "USB-C to USB-A Adapter": 1,
@@ -80,9 +80,9 @@ const locations = {
       "DI Box (Active)": 2,
       "DI Box (Stereo)": 3,
       "DI Box (USB)": 1,
-      "1/4 TRS to Dual 1/4 TS Adapter": 1,
+      "1/4 TRS-M to Dual 1/4 TS-M Adapter": 1,
       "3.5mm TRS to XLR Adapter": 1,
-      "1/4 TRS to Dual XLR Adapter": 1,
+      "1/4 TRS-M to Dual XLR Adapter": 1,
 
       // Monitors
       "Wedge (Active)": 2,

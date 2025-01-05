@@ -1,9 +1,25 @@
-function addItem(equipment, item, add) {
+function addItem(equipment, item, add, chan) {
+
    if (equipment[item] === undefined || equipment[item] === null) {
       equipment[item] = 0;
    }
-
+   
    equipment[item] += add;
+
+   if (chan) {
+
+      if (!chan.equipment) {
+         chan.equipment = {};
+      }
+
+      if (chan.equipment[item] === undefined || chan.equipment[item] === null) {
+         chan.equipment[item] = 0;
+      }
+   
+      chan.equipment[item] += add;
+   
+      return [equipment, chan];
+   }
 
    return equipment;
 }
@@ -17,16 +33,18 @@ const instruments = [
          bringing: { checked: false, disabled: true },
          stereo: { checked: false, disabled: true }
       },
-      equip: ({position}, channels, equipment) => {
+      equip: ({position}, channels, equipment, musician) => {
 
          // always
-         equipment = addItem(equipment, "Mic (Wired)", 1);
-         equipment = addItem(equipment, "Music Stand", 1);
-         channels++;
+         const chans = [{ label: "Mic", musician: musician }];
+         [equipment, chans[0]] = addItem(equipment, "Mic (Wired)", 1, chans[0]);
+         [equipment, chans[0]] = addItem(equipment, "Music Stand", 1, chans[0]);
 
          // depending on distance from stage box, xlr or xlrLong
          const xlrLength = position === "far" ? "XLR Cable (Long)" : "XLR Cable";
-         equipment = addItem(equipment, xlrLength, 1);
+         [equipment, chans[0]] = addItem(equipment, xlrLength, 1, chans[0]);
+
+         channels.push(...chans);
 
          return [ channels, equipment ];
       }
@@ -39,28 +57,30 @@ const instruments = [
          bringing: { checked: false, disabled: false },
          stereo: { checked: false, disabled: true }
       },
-      equip: ({singing, bringing, position}, channels, equipment) => {
+      equip: ({singing, bringing, position}, channels, equipment, musician) => {
 
          // always need
-         equipment = addItem(equipment, "1/4 TS Cable", 1);
-         equipment = addItem(equipment, "DI Box", 1);
-         equipment = addItem(equipment, "Music Stand", 1);
-         channels++;
+         const chans = [{ label: "Acoustic Guitar", musician: musician }];
+         [equipment, chans[0]] = addItem(equipment, "1/4 TS Cable", 1, chans[0]);
+         [equipment, chans[0]] = addItem(equipment, "DI Box", 1, chans[0]);
+         [equipment, chans[0]] = addItem(equipment, "Music Stand", 1, chans[0]);
 
          // depending on distance
          const xlrLength = position === "far" ? "XLR Cable (Long)" : "XLR Cable";
-         equipment = addItem(equipment, xlrLength, 1);
+         [equipment, chans[0]] = addItem(equipment, xlrLength, 1, chans[0]);
 
          if (singing) {
-            equipment = addItem(equipment, xlrLength, 1);
-            equipment = addItem(equipment, "Mic (Wired)", 1);
-            equipment = addItem(equipment, "Boom Stand", 1);
-            channels++;
+            chans.push({ label: "Mic", musician: musician });
+            [equipment, chans[1]] = addItem(equipment, xlrLength, 1, chans[1]);
+            [equipment, chans[1]] = addItem(equipment, "Mic (Wired)", 1, chans[1]);
+            [equipment, chans[1]] = addItem(equipment, "Boom Stand", 1, chans[1]);
          }
 
          if (!bringing) {
-            equipment = addItem(equipment, "Acoustic Guitar", 1);
+            [equipment, chans[0]] = addItem(equipment, "Acoustic Guitar", 1, chans[0]);
          }
+
+         channels.push(...chans);
 
          return [ channels, equipment ];
       }
@@ -73,19 +93,23 @@ const instruments = [
          bringing: { checked: false, disabled: true },
          stereo: { checked: false, disabled: false }
       },
-      equip: ({singing, position}, channels, equipment) => {
+      equip: ({singing, position}, channels, equipment, musician) => {
+
+         const chans = [];
 
          if (singing) {
 
             // always
-            equipment = addItem(equipment, "Mic (Wired)", 1);
-            equipment = addItem(equipment, "Boom Stand", 1);
-            channels++;
+            chans.push({ label: "Mic", musician: musician });
+            [equipment, chans[0]] = addItem(equipment, "Mic (Wired)", 1, chans[0]);
+            [equipment, chans[0]] = addItem(equipment, "Boom Stand", 1, chans[0]);
 
             // depending on distance
             const xlrLength = position === "far" ? "XLR Cable (Long)" : "XLR Cable";
-            equipment = addItem(equipment, xlrLength, 1);
+            [equipment, chans[0]] = addItem(equipment, xlrLength, 1, chans[0]);
          }
+
+         channels.push(...chans);
 
          return [ channels, equipment ];
       }
@@ -98,41 +122,56 @@ const instruments = [
          bringing: { checked: false, disabled: true },
          stereo: { checked: false, disabled: false }
       },
-      equip ({singing, bringing, stereo, position}, channels, equipment) {
+      equip ({singing, bringing, stereo, position}, channels, equipment, musician) {
 
-         // always
-         equipment = addItem(equipment, "Music Stand", 1);
+         const chans = [];
 
          // depending on distance
          const xlrLength = position === "far" ? "XLR Cable (Long)" : "XLR Cable";
-         equipment = addItem(equipment, xlrLength, stereo ? 2 : 1);
-         
-
 
          // if stereo, need double the equipment
          if (stereo) {
-            equipment = addItem(equipment, "1/4 TS Cable", 2);
-            equipment = addItem(equipment, "DI Box (Stereo)", 1);
-            channels += 2;
+
+            chans.push({ label: `Keyboard L`, musician: musician }, { label: `Keyboard R`, musician: musician });
+
+            [equipment, chans[0]] = addItem(equipment, xlrLength, 1, chans[0]);
+            [equipment, chans[1]] = addItem(equipment, xlrLength, 1, chans[1]);
+
+            [equipment, chans[0]] = addItem(equipment, "1/4 TS Cable", 1, chans[0]);
+            [equipment, chans[1]] = addItem(equipment, "1/4 TS Cable", 1, chans[1]);
+
+            [equipment, chans[0]] = addItem(equipment, "DI Box (Stereo)", 1, chans[0]);
 
          // if mono
          } else {
-            equipment = addItem(equipment, "1/4 TS Cable", 1);
-            equipment = addItem(equipment, "DI Box", 1);
-            channels++;
+            
+            chans.push({ label: `Keyboard`, musician: musician });
+
+            [equipment, chans[0]] = addItem(equipment, xlrLength, 1, chans[0]);
+            [equipment, chans[0]] = addItem(equipment, "1/4 TS Cable", 1, chans[0]);
+            [equipment, chans[0]] = addItem(equipment, "DI Box", 1, chans[0]);
          }
 
          if (singing) {
-            equipment = addItem(equipment, xlrLength, 1);
-            equipment = addItem(equipment, "Mic (Wired)", 1);
-            equipment = addItem(equipment, "Boom Stand", 1);
-            channels++;
+
+            const i = chans.length;
+
+            chans.push({ label: `Mic`, musician: musician });
+
+            [equipment, chans[i]] = addItem(equipment, xlrLength, 1, chans[i]);
+            [equipment, chans[i]] = addItem(equipment, "Mic (Wired)", 1, chans[i]);
+            [equipment, chans[i]] = addItem(equipment, "Boom Stand", 1, chans[i]);
          }
 
          if (!bringing) {
-            equipment = addItem(equipment, "Keyboard", 1);
-            equipment = addItem(equipment, "Keyboard Stand", 1);
+            [equipment, chans[0]] = addItem(equipment, "Keyboard", 1, chans[0]);
+            [equipment, chans[0]] = addItem(equipment, "Keyboard Stand", 1, chans[0]);
          }
+
+         // always
+         [equipment, chans[0]] = addItem(equipment, "Music Stand", 1, chans[0]);
+
+         channels.push(...chans);
 
          return [ channels, equipment ];
       }
@@ -145,32 +184,52 @@ const instruments = [
          bringing: { checked: true, disabled: true },
          stereo: { checked: false, disabled: false }
       },
-      equip: ({singing, stereo, position}, channels, equipment) => {
+      equip: ({singing, stereo, position}, channels, equipment, musician) => {
          
          // always
-         equipment = addItem(equipment, "Music Stand", 1);
+         const chans = [];
 
          // depending on distance
          const xlrLength = position === "far" ? "XLR Cable (Long)" : "XLR Cable";
-         equipment = addItem(equipment, xlrLength, stereo ? 2 : 1);
 
          // if stereo, need double
          if (stereo) {
-            equipment = addItem(equipment, "1/4 TS Cable", 2);
-            equipment = addItem(equipment, "DI Box (Stereo)", 1);
-            channels += 2;
+
+            chans.push({ label: `Electric Guitar L`, musician: musician }, { label: `Electric Guitar R`, musician: musician });
+
+            [equipment, chans[0]] = addItem(equipment, xlrLength, 1, chans[0]);
+            [equipment, chans[1]] = addItem(equipment, xlrLength, 1, chans[1]);
+
+            [equipment, chans[0]] = addItem(equipment, "1/4 TS Cable", 1, chans[0]);
+            [equipment, chans[1]] = addItem(equipment, "1/4 TS Cable", 1, chans[1]);
+
+            [equipment, chans[0]] = addItem(equipment, "DI Box (Stereo)", 1, chans[0]);
+
          } else {
-            equipment = addItem(equipment, "1/4 TS Cable", 1);
-            equipment = addItem(equipment, "DI Box", 1);
-            channels++;
+
+            chans.push({ label: `Electric Guitar`, musician: musician });
+
+            [equipment, chans[0]] = addItem(equipment, xlrLength, 1, chans[0]);
+
+            [equipment, chans[0]] = addItem(equipment, "1/4 TS Cable", 1, chans[0]);
+            [equipment, chans[0]] = addItem(equipment, "DI Box", 1, chans[0]);
          }
 
          if (singing) {
-            equipment = addItem(equipment, xlrLength, 1);
-            equipment = addItem(equipment, "Mic (Wired)", 1);
-            equipment = addItem(equipment, "Boom Stand", 1);
-            channels++;
+
+            const i = chans.length;
+
+            chans.push({ label: `Mic`, musician: musician });
+
+            [equipment, chans[i]] = addItem(equipment, xlrLength, 1, chans[i]);
+            [equipment, chans[i]] = addItem(equipment, "Mic (Wired)", 1, chans[i]);
+            [equipment, chans[i]] = addItem(equipment, "Boom Stand", 1, chans[i]);
          }
+
+         // always
+         [equipment, chans[0]] = addItem(equipment, "Music Stand", 1, chans[0]);
+
+         channels.push(...chans);
 
          return [ channels, equipment ];
       }
@@ -183,28 +242,30 @@ const instruments = [
          bringing: { checked: false, disabled: false },
          stereo: { checked: false, disabled: true }
       },
-      equip: ({singing, bringing, position}, channels, equipment) => {
+      equip: ({singing, bringing, position}, channels, equipment, musician) => {
          
          // always
-         equipment = addItem(equipment, "Music Stand", 1);
-         equipment = addItem(equipment, "1/4 TS Cable", 1);
-         equipment = addItem(equipment, "DI Box", 1);
-         channels++;
+         const chans = [{ label: `Bass`, musician: musician }];
+         [equipment, chans[0]] = addItem(equipment, "Music Stand", 1, chans[0]);
+         [equipment, chans[0]] = addItem(equipment, "1/4 TS Cable", 1, chans[0]);
+         [equipment, chans[0]] = addItem(equipment, "DI Box", 1, chans[0]);
 
          // depending on distance
          const xlrLength = position === "far" ? "XLR Cable (Long)" : "XLR Cable";
-         equipment = addItem(equipment, xlrLength, 1);
+         [equipment, chans[0]] = addItem(equipment, xlrLength, 1, chans[0]);
 
          if (singing) {
-            equipment = addItem(equipment, xlrLength, 1);
-            equipment = addItem(equipment, "Mic (Wired)", 1);
-            equipment = addItem(equipment, "Boom Stand", 1);
-            channels++;
+            chans.push({ label: `Mic`, musician: musician });
+            [equipment, chans[1]] = addItem(equipment, xlrLength, 1, chans[1]);
+            [equipment, chans[1]] = addItem(equipment, "Mic (Wired)", 1, chans[1]);
+            [equipment, chans[1]] = addItem(equipment, "Boom Stand", 1, chans[1]);
          }
 
          if (!bringing) {
-            equipment = addItem(equipment, "Bass", 1);
+            [equipment, chans[0]] = addItem(equipment, "Bass", 1, chans[0]);
          }
+
+         channels.push(...chans);
 
          return [ channels, equipment ];
       }
@@ -217,16 +278,19 @@ const instruments = [
          bringing: { checked: true, disabled: true },
          stereo: { checked: false, disabled: true }
       },
-      equip: ({position}, channels, equipment) => {
+      equip: ({position}, channels, equipment, musician) => {
 
          // always
-         equipment = addItem(equipment, "Music Stand", 1);
-         equipment = addItem(equipment, "Boom Stand", 1);
-         channels++;
+         const chans = [{ label: "Violin", musician: musician }];
+
+         [equipment, chans[0]] = addItem(equipment, "Music Stand", 1, chans[0]);
+         [equipment, chans[0]] = addItem(equipment, "Boom Stand", 1, chans[0]);
 
          // depending on distance
          const xlrLength = position === "far" ? "XLR Cable (Long)" : "XLR Cable";
-         equipment = addItem(equipment, xlrLength, 1);
+         [equipment, chans[0]] = addItem(equipment, xlrLength, 1, chans[0]);
+
+         channels.push(...chans);
 
          return [ channels, equipment ];
       }
@@ -239,52 +303,32 @@ const instruments = [
          bringing: { checked: false, disabled: false },
          stereo: { checked: false, disabled: true }
       },
-      equip: ({singing, bringing, position}, channels, equipment) => {
+      equip: ({singing, bringing, position}, channels, equipment, musician) => {
          
          // always
-         equipment = addItem(equipment, "Music Stand", 1);
-         equipment = addItem(equipment, "Boom Stand (Short)", 1);
-         equipment = addItem(equipment, "Mic (Instrument)", 1);
-         channels++;
+         const chans = [{ label: `Cajon`, musician: musician }];
+         [equipment, chans[0]] = addItem(equipment, "Music Stand", 1, chans[0]);
+         [equipment, chans[0]] = addItem(equipment, "Boom Stand (Short)", 1, chans[0]);
+         [equipment, chans[0]] = addItem(equipment, "Mic (Instrument)", 1, chans[0]);
          
          // depending on distance
          const xlrLength = position === "far" ? "XLR Cable (Long)" : "XLR Cable";
-         equipment = addItem(equipment, xlrLength, 1);
+         [equipment, chans[0]] = addItem(equipment, xlrLength, 1, chans[0]);
 
          if (singing) {
-            equipment = addItem(equipment, xlrLength, 1);
-            equipment = addItem(equipment, "Boom Stand", 1);
-            equipment = addItem(equipment, "Mic (Wired)", 1);
-            channels++;
+            chans.push({ label: `Mic`, musician: musician });
+            [equipment, chans[1]] = addItem(equipment, xlrLength, 1, chans[1]);
+            [equipment, chans[1]] = addItem(equipment, "Boom Stand", 1, chans[1]);
+            [equipment, chans[1]] = addItem(equipment, "Mic (Wired)", 1), chans[1];
          }
 
          if (!bringing) {
-            equipment = addItem(equipment, "Cajon", 1);
+            [equipment, chans[0]] = addItem(equipment, "Cajon", 1, chans[0]);
          }
+
+         channels.push(...chans);
 
          return [ channels, equipment ];
       }
-   },
-   // {
-   //    name: "speaker",
-   //    label: "Speaker",
-   //    constraints: {
-   //       singing: { checked: true, disabled: true },
-   //       bringing: { checked: false, disabled: true },
-   //       stereo: { checked: false, disabled: true }
-   //    },
-   //    equip: ({position}, channels, equipment) => {
-
-   //       // always
-   //       equipment = addItem(equipment, "Mic (Wired)", 1);
-   //       equipment = addItem(equipment, "Music Stand", 1);
-   //       channels++;
-
-   //       // depending on distance
-   //       const xlrLength = position === "far" ? "XLR Cable (Long)" : "XLR Cable";
-   //       equipment = addItem(equipment, xlrLength, 1);
-
-   //       return [ channels, equipment ];
-   //    }
-   // }
+   }
 ]
