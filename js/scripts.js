@@ -1,19 +1,3 @@
-// High prio
-// wireless mics
-// finish always
-// on channel instrument field change
-// add cables for macbook audio
-// not enough equipment
-// equipment lists
-
-// Low prio
-// channel quantity
-// max channels
-// alert (changes made, submit again)
-// clarify adapter M/F connectors in inventory, always, and instruments
-// query string
-
-
 // elements
 const rolesTable = document.getElementById('roles-table').getElementsByTagName('tbody')[0];
 
@@ -22,7 +6,8 @@ let selection = [];
 let channels = [];
 let equipment = {};
 
-const maxChannels = 12;
+let maxChannels = 12;
+let maxMicWireless = 2;
 
 
 // add event listeners
@@ -234,12 +219,7 @@ function calcEquipment({ equipAlways, selection, instruments, channels, equipmen
          musician: musician,
          equip: (channels, equipment, musician) => {
 
-            [channels, equipment] = instrument.equip({
-               singing: musician.singing,
-               bringing: musician.bringing,
-               stereo: musician.stereo,
-               position: musician.position
-            }, channels, equipment, musician);
+            [channels, equipment] = instrument.equip(musician, channels, equipment);
 
             return [channels, equipment];
 
@@ -378,6 +358,9 @@ function sourceEquipment(equipment, locations) {
       }
    }
 
+   // not enough equipment
+   needs["Not Enough"] = eq;
+
    console.log("Needs:");
    console.log(needs);
 
@@ -404,17 +387,49 @@ function populateEquipmentTable(tbody, locationNeeds) {
 
 }
 
+function populateEquipmentList(tbody, location, locationID, locationNeeds) {
+
+   const section = tbody.closest('section');
+
+   // reset list
+   let existingList = section.querySelector('.list');
+   if (existingList) { existingList.remove(); }
+
+   // create <li> elements
+   let listItems = '';
+   for (let [item, qty] of Object.entries(locationNeeds)) {
+      listItems += `<li>${item} x${qty}</li>`;
+   }
+   
+   // create <ol> from array
+   const list = `
+      <div class="list">
+         <h3>${location}</h3>
+         <ul id="${locationID}-list">
+            ${listItems}
+         </ul>
+      </div>
+   `;
+
+   // append <ol> to channels-section
+   section.innerHTML += list;
+
+   return list;
+}
+
 function populateEquipment(needs) {
 
    const tableIds = {
       "St. Andrew's Hall": "st-andrews-hall-table",
-      "Neighbours Hall": "neighbours-hall-table"
+      "Neighbours Hall": "neighbours-hall-table",
+      "Not Enough": "not-enough-table"
    };
 
    for (let [location, locationNeeds] of Object.entries(needs)) {
 
       const tbody = document.getElementById(tableIds[location]).getElementsByTagName('tbody')[0];
       populateEquipmentTable(tbody, locationNeeds);
+      populateEquipmentList(tbody, location, tableIds[location], locationNeeds);
 
    }
 }
@@ -435,9 +450,7 @@ function populateChannelsList(channels, tbody) {
    const section = tbody.closest('section');
 
    // reset list
-   let existingListHeading = section.querySelector('h3');
-   if (existingListHeading) { existingListHeading.remove(); }
-   let existingList = section.querySelector('ol');
+   let existingList = section.querySelector('.list');
    if (existingList) { existingList.remove(); }
 
    // create <li> elements
@@ -449,11 +462,13 @@ function populateChannelsList(channels, tbody) {
 
    // create <ol> from array
    const list = `
+      <div class="list">
          <h3>Channels List</h3>
          <ol id="channels-list">
             ${listItems.join("")}
          </ol>
-      `;
+      </div>
+   `;
 
    // append <ol> to channels-section
    section.innerHTML += list;
@@ -469,6 +484,46 @@ function reorderChannels(channels) {
    const endFilter = chan => chan.label.indexOf("Macbook") !== -1;
    const endChannels = channels.filter(endFilter);
    channels = channels.filter(chan => !endFilter(chan));
+
+   // take out last stereo instrument
+
+   let lastStereo = [];
+
+   // query far stereo channels
+   const farStereoFilter = chan => (chan.musician.stereo && chan.musician.position === "far");
+   const farStereoChannels = channels.filter(farStereoFilter);
+
+   if (farStereoChannels.length >= 2) {
+      
+      lastStereo = [
+         farStereoChannels[farStereoChannels.length - 1],
+         farStereoChannels[farStereoChannels.length - 2]
+      ];
+
+      // take out
+      channels = channels.filter(chan => (
+         chan !== lastStereo[0] && chan !== lastStereo[1]
+      ));
+
+   } else {
+
+      // query for stereo channels
+      const stereoFilter = chan => (chan.musician.stereo);
+      const stereoChannels = channels.filter(stereoFilter);
+
+      if (stereoChannels.length >= 2) {
+
+         lastStereo = [
+            stereoChannels[stereoChannels.length - 1],
+            stereoChannels[stereoChannels.length - 2]
+         ];
+         
+         // take out
+         channels = channels.filter(chan => (
+            chan !== lastStereo[0] && chan !== lastStereo[1]
+         ));
+      }
+   }
 
    // add channels in this order
    const filters = [
@@ -486,6 +541,11 @@ function reorderChannels(channels) {
       orderedChannels.push(...channels.filter(filters[i]));
       channels = channels.filter(chan => !filters[i](chan));
    });
+
+   // add lastStereo channels
+   if (lastStereo.length === 2) {
+      orderedChannels.push(lastStereo[1], lastStereo[0]);
+   }
 
    // add end channels
    orderedChannels.push(...endChannels);
@@ -518,9 +578,9 @@ function populateChannelsTable(channels, tbody) {
          <tr chan-data='${JSON.stringify(chan)}' chan-index='${index}'>
             <td class="cell-sm">
             </td>
-            <td class="cell-lg cell-channel">
-               <input type="text" value="${chan.label}${chan.musician ? (chan.musician.name ? ` (${chan.musician.name})` : ``) : ``}">
-               ${equipmentListItems.length > 0 ? `<ul>${equipmentListItems.join('')}</ul>` : ``}
+            <td class="cell-lg cell-flex-col">
+               <p>${chan.label}${chan.musician ? (chan.musician.name ? ` (${chan.musician.name})` : ``) : ``}</p>
+               ${equipmentListItems.length > 0 ? `<ul class="channel-equipment">${equipmentListItems.join('')}</ul>` : ``}
             </td>
             <td class="cell-actions-sm">
                <button class="channel-controls" type="button" onclick="moveRowUp(this)">&uarr;</button>
@@ -558,6 +618,7 @@ function handleChange() {
 
    // reset equipment
    console.clear();
+   maxMicWireless = 2;
    channels = [];
    equipment = {};
 
