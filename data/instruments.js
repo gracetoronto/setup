@@ -130,7 +130,7 @@ const instruments = [
    },
    {
       name: "keyboard",
-      label: "Keyboard",
+      label: "Keyboard (TS out)",
       constraints: {
          singing: { checked: false, disabled: false },
          bringing: { checked: false, disabled: true },
@@ -172,6 +172,7 @@ const instruments = [
          }
 
          // always
+         [equipment, chans[0]] = addItem(equipment, "Extension Cord", 1, chans[0]);
          [equipment, chans[0]] = addItem(equipment, "Music Stand", 1, chans[0]);
 
          channels.push(...chans);
@@ -181,7 +182,7 @@ const instruments = [
    },
    {
       name: "keyboard_balanced",
-      label: "Keyboard (Balanced)",
+      label: "Keyboard (XLR out)",
       constraints: {
          singing: { checked: false, disabled: false },
          bringing: { checked: false, disabled: true },
@@ -225,7 +226,7 @@ const instruments = [
    },
    {
       name: "electric_guitar",
-      label: "Electric Guitar",
+      label: "Electric Guitar (TS out)",
       constraints: {
          singing: { checked: false, disabled: false },
          bringing: { checked: true, disabled: true },
@@ -271,7 +272,7 @@ const instruments = [
    },
    {
       name: "electric_guitar_balanced",
-      label: "Electric Guitar (Balanced)",
+      label: "Electric Guitar (XLR out)",
       constraints: {
          singing: { checked: false, disabled: false },
          bringing: { checked: true, disabled: true },
