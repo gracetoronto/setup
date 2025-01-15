@@ -375,16 +375,48 @@ function populateEquipmentTable(tbody, locationNeeds) {
    // populate table
    for (let [item, qty] of Object.entries(locationNeeds)) {
 
-      const row = `
-         <tr>
-            <td class="cell-lg">${item}</td>
-            <td class="cell-sm">${qty}</td>
-         </tr>
-      `;
+      const checkbox = document.createElement('input');
+      checkbox.setAttribute('type', 'checkbox');
 
-      tbody.innerHTML += row;
+      const label = document.createElement('label');
+      label.innerText = item;
+
+      const fieldset = document.createElement('fieldset');
+      fieldset.appendChild(checkbox);
+      fieldset.appendChild(label);
+
+      const td1 = document.createElement('td');
+      td1.classList.add('cell-lg');
+      td1.appendChild(fieldset);
+
+      const td2 = document.createElement('td');
+      td2.classList.add('cell-sm');
+      td2.innerText = qty;
+
+      const row = document.createElement('tr');
+      row.appendChild(td1);
+      row.appendChild(td2);
+
+      // const row = `
+      //    <tr>
+      //       <td class="cell-lg">
+      //          <fieldset>
+      //             <input type="checkbox">
+      //             <label>${item}</label>
+      //          </fieldset>
+      //       </td>
+      //       <td class="cell-sm">${qty}</td>
+      //    </tr>
+      // `;
+
+      // tbody.innerHTML += row;
+      tbody.appendChild(row);
    }
 
+   const labels = Array.from(tbody.querySelectorAll('label'));
+   labels.forEach(label => {
+      label.addEventListener('click', handleLabelClick);
+   });
 }
 
 function populateEquipmentList(tbody, location, locationID, locationNeeds) {
@@ -642,6 +674,11 @@ function handleChange() {
 
    // source equipment needed from each location
    populateEquipment(sourceEquipment(equipment, locations));
+
+   const labels = Array.from(document.querySelectorAll('td label'));
+   labels.forEach(label => {
+      label.addEventListener('click', handleLabelClick);
+   });
 }
 
 

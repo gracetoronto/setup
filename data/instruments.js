@@ -42,13 +42,13 @@ function equipSinging(musician, equipment, chans) {
       if (usingWireless && maxMicWireless > 0) {
          [equipment, chans[i]] = addItem(equipment, "Mic (Wireless)", 1, chans[i]);
          maxMicWireless--;
-   
-      // using wired 
+
+         // using wired 
       } else {
          [equipment, chans[i]] = addItem(equipment, "Mic (Wired)", 1, chans[i]);
          [equipment, chans[i]] = addItem(equipment, xlrLength(musician), 1, chans[i]);
       }
-   
+
       // need boom stand
       if (musician.instrument !== "none") {
          [equipment, chans[i]] = addItem(equipment, "Boom Stand", 1, chans[i]);
@@ -153,13 +153,57 @@ const instruments = [
             [equipment, chans[0]] = addItem(equipment, xlrLength(musician), 1, chans[0]);
             [equipment, chans[1]] = addItem(equipment, xlrLength(musician), 1, chans[1]);
 
-         // if mono
+            // if mono
          } else {
 
             chans.push({ label: `Keyboard`, musician: musician });
 
             [equipment, chans[0]] = addItem(equipment, "1/4 TS Cable", 1, chans[0]);
             [equipment, chans[0]] = addItem(equipment, "DI Box", 1, chans[0]);
+            [equipment, chans[0]] = addItem(equipment, xlrLength(musician), 1, chans[0]);
+         }
+
+         // singing
+         [equipment, chans] = equipSinging(musician, equipment, chans);
+
+         if (!musician.bringing) {
+            [equipment, chans[0]] = addItem(equipment, "Keyboard", 1, chans[0]);
+            [equipment, chans[0]] = addItem(equipment, "Keyboard Stand", 1, chans[0]);
+         }
+
+         // always
+         [equipment, chans[0]] = addItem(equipment, "Music Stand", 1, chans[0]);
+
+         channels.push(...chans);
+
+         return [channels, equipment];
+      }
+   },
+   {
+      name: "keyboard_balanced",
+      label: "Keyboard (Balanced)",
+      constraints: {
+         singing: { checked: false, disabled: false },
+         bringing: { checked: false, disabled: true },
+         stereo: { checked: false, disabled: false }
+      },
+      equip(musician, channels, equipment) {
+
+         let chans = [];
+
+         // if stereo, need double the equipment
+         if (musician.stereo) {
+
+            chans.push({ label: `Keyboard L`, musician: musician }, { label: `Keyboard R`, musician: musician });
+
+            [equipment, chans[0]] = addItem(equipment, xlrLength(musician), 1, chans[0]);
+            [equipment, chans[1]] = addItem(equipment, xlrLength(musician), 1, chans[1]);
+
+            // if mono
+         } else {
+
+            chans.push({ label: `Keyboard`, musician: musician });
+
             [equipment, chans[0]] = addItem(equipment, xlrLength(musician), 1, chans[0]);
          }
 
@@ -211,6 +255,45 @@ const instruments = [
 
             [equipment, chans[0]] = addItem(equipment, "1/4 TS Cable", 1, chans[0]);
             [equipment, chans[0]] = addItem(equipment, "DI Box", 1, chans[0]);
+            [equipment, chans[0]] = addItem(equipment, xlrLength(musician), 1, chans[0]);
+         }
+
+         // singing
+         [equipment, chans] = equipSinging(musician, equipment, chans);
+
+         // always
+         [equipment, chans[0]] = addItem(equipment, "Music Stand", 1, chans[0]);
+
+         channels.push(...chans);
+
+         return [channels, equipment];
+      }
+   },
+   {
+      name: "electric_guitar_balanced",
+      label: "Electric Guitar (Balanced)",
+      constraints: {
+         singing: { checked: false, disabled: false },
+         bringing: { checked: true, disabled: true },
+         stereo: { checked: false, disabled: false }
+      },
+      equip: (musician, channels, equipment) => {
+
+         // always
+         let chans = [];
+
+         // if stereo, need double
+         if (musician.stereo) {
+
+            chans.push({ label: `Electric Guitar L`, musician: musician }, { label: `Electric Guitar R`, musician: musician });
+
+            [equipment, chans[0]] = addItem(equipment, xlrLength(musician), 1, chans[0]);
+            [equipment, chans[1]] = addItem(equipment, xlrLength(musician), 1, chans[1]);
+
+         } else {
+
+            chans.push({ label: `Electric Guitar`, musician: musician });
+
             [equipment, chans[0]] = addItem(equipment, xlrLength(musician), 1, chans[0]);
          }
 

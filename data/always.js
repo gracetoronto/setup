@@ -9,7 +9,8 @@ function equipAlways(channels, equipment) {
 
    // POWER
 
-   // add power equipment here
+   equipment = addItem(equipment, "Power Bar", 1);
+   equipment = addItem(equipment, "Extension Cord", 1);
 
    // PROJECTION
 
@@ -20,7 +21,14 @@ function equipAlways(channels, equipment) {
 
    // LIGHTING
 
-   // add lighting equipment here
+   equipment = addItem(equipment, "Side Flood Lights", 4);
+   equipment = addItem(equipment, "Stage PAR", 4);
+   equipment = addItem(equipment, "Stage Wash", 4);
+   equipment = addItem(equipment, "DMX Transmitter", 1);
+   equipment = addItem(equipment, "DMX Receiver", 6);
+   equipment = addItem(equipment, "USB to DMX Adapter", 1);
+   equipment = addItem(equipment, "USB-C Adapter", 1);
+   equipment = addItem(equipment, "Light Stand", 2);
 
    // SOUND
 
@@ -35,10 +43,14 @@ function equipAlways(channels, equipment) {
    equipment = addItem(equipment, "XLR Cable (Long)", 1);
 
    // for wedges
-   equipment = addItem(equipment, "XLR-M to 1/4 TRS-M Adapter", 2);
-   equipment = addItem(equipment, "Wedge (Active)", 2);
-   equipment = addItem(equipment, "XLR Cable", 2);
-   equipment = addItem(equipment, "IEC Power Cable", 2);
+
+   const usingWedges = document.querySelector('input[name="use_wedges[]"]').checked;
+   if (usingWedges) {
+      equipment = addItem(equipment, "XLR-M to 1/4 TRS-M Adapter", 2);
+      equipment = addItem(equipment, "Wedge (Active)", 2);
+      equipment = addItem(equipment, "XLR Cable", 2);
+      equipment = addItem(equipment, "IEC Power Cable", 2);
+   }
 
    // for wireless mics
    const usingWireless = document.querySelector('input[name="use_wireless_mics[]"]').checked;

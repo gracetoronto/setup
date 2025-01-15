@@ -15,8 +15,16 @@ fieldset {
    padding: 0;
    border: none;
    display: flex;
+   align-items: flex-start;
    column-gap: 0.5rem;
+}
 
+fieldset > label {
+   cursor: pointer;
+}
+
+fieldset > input[type="checkbox"] {
+   margin-top: 0.25em;
 }
 
 main {
