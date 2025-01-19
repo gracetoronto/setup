@@ -524,7 +524,7 @@ function reorderChannels(channels) {
    let lastStereo = [];
 
    // query far stereo channels
-   const farStereoFilter = chan => (chan.musician.stereo && chan.musician.position === "far");
+   const farStereoFilter = chan => (chan.musician.stereo && chan.musician.position === "far" && chan.label !== "Mic");
    const farStereoChannels = channels.filter(farStereoFilter);
 
    if (farStereoChannels.length >= 2) {
@@ -542,7 +542,7 @@ function reorderChannels(channels) {
    } else {
 
       // query for stereo channels
-      const stereoFilter = chan => (chan.musician.stereo);
+      const stereoFilter = chan => (chan.musician.stereo && chan.label !== "Mic");
       const stereoChannels = channels.filter(stereoFilter);
 
       if (stereoChannels.length >= 2) {
