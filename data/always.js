@@ -15,7 +15,7 @@ function equipAlways(channels, equipment) {
    // PROJECTION
 
    equipment = addItem(equipment, "Projector", 1);
-   equipment = addItem(equipment, "HDMI Cable", 1);
+   // equipment = addItem(equipment, "HDMI Cable", 1);
    equipment = addItem(equipment, "HDMI Cable (Long)", 1);
    equipment = addItem(equipment, "USB-C Hub", 1);
 
@@ -71,9 +71,7 @@ function equipAlways(channels, equipment) {
    } else {
 
       const chans = [{ label: "Macbook" }];
-      [equipment, chans[0]] = addItem(equipment, "1/4 TS Cable", 1, chans[0]);
-      [equipment, chans[0]] = addItem(equipment, "DI Box", 1, chans[0]);
-      [equipment, chans[0]] = addItem(equipment, "XLR Cable", 1, chans[0]);
+      [equipment, chans[0]] = addItem(equipment, "1/4 TRS to 3.5mm TRS Adapter", 1, chans[0]);
 
       channels.push(...chans);
    }

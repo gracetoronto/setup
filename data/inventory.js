@@ -37,7 +37,7 @@ const locations = {
       // Mics
       "Mic (Wireless)": 1,
       "Mic (Wired)": 3,
-      "Mic (Instrument)": 1,
+      "Mic (SM57)": 1,
 
       // DI and Adapters
       "DI Box": 1,
@@ -65,15 +65,15 @@ const locations = {
 
       // SOUND
       // Cables
-      "XLR Cable": 15,
+      "XLR Cable": 5,
       "XLR Cable (Long)": 10,
       "1/4 TS Cable": 4,
 
       // Mics
       "Mic (Wireless)": 1,
       "Mic (Wired)": 6,
-      "Mic (Instrument)": 4,
-      "Mic (Drum)": 1,
+      "Mic (SM57)": 4,
+      "Mic (Beta SM52a)": 1,
 
       // DI and Adapters
       "DI Box": 4,
