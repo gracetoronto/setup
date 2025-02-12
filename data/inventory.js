@@ -40,7 +40,7 @@ const locations = {
       "Mic (SM57)": 1,
 
       // DI and Adapters
-      "DI Box": 1,
+      // "DI Box": 1,
       "XLR-M to 1/4 TRS-M Adapter": 2,
       "1/4 TRS to 3.5mm TRS Adapter": 1,
       "USB-C to 3.5mm TRS Adapter": 1,
