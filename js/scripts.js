@@ -528,8 +528,8 @@ function reorderChannels(channels) {
 
    let lastStereo = [];
 
-   // query far stereo channels
-   const farStereoFilter = chan => (chan.musician.stereo && chan.musician.position === "far" && chan.label !== "Mic");
+   // query far stereo channels (changed to near)
+   const farStereoFilter = chan => (chan.musician.stereo && chan.musician.position === "near" && chan.label !== "Mic");
    const farStereoChannels = channels.filter(farStereoFilter);
 
    if (farStereoChannels.length >= 2) {
@@ -566,12 +566,12 @@ function reorderChannels(channels) {
 
    // add channels in this order
    const filters = [
-      // near mics
-      chan => (chan.label === "Mic" && chan.musician.position === "near"),
       // far mics
       chan => (chan.label === "Mic" && chan.musician.position === "far"),
-      // near instruments
-      chan => (chan.musician.position === "near"),
+      // near mics
+      chan => (chan.label === "Mic" && chan.musician.position === "near"),
+      // far instruments
+      chan => (chan.musician.position === "far"),
       // all other instruments
       chan => (chan => true)
    ];
@@ -586,13 +586,13 @@ function reorderChannels(channels) {
       orderedChannels.push(lastStereo[1], lastStereo[0]);
    }
 
-   // add end channels
-   orderedChannels.push(...endChannels);
-
    // add extra channels
-   while (orderedChannels.length < maxChannels) {
+   while ((orderedChannels.length + endChannels.length) < maxChannels) {
       orderedChannels.push({ label: "" });
    }
+
+   // add end channels
+   orderedChannels.push(...endChannels);
 
    return orderedChannels;
 }
