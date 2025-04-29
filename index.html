@@ -42,13 +42,32 @@
                      <input type="checkbox" name="use_wireless_mics[]">
                      <label for="use_wireless_mics[]">Use wireless mics</label>
                   </fieldset>
-                  <fieldset>
+                  <fieldset class="hidden">
                      <input type="checkbox" name="use_wedges[]">
                      <label for="use_wedges[]">Use wedges</label>
                   </fieldset>
-                  <fieldset>
-                     <input type="checkbox" name="macbook_stereo[]">
+                  <fieldset class="hidden">
+                     <input type="checkbox" name="macbook_stereo[]" checked>
                      <label for="macbook_stereo[]">Macbook stereo</label>
+                  </fieldset>
+                  <fieldset>
+                     <select name="wireless_iem_channels[]">
+                        <option>0</option>
+                        <option>1</option>
+                        <option>2</option>
+                     </select>
+                     <label for="wireless_iem_channels[]">Wireless&nbsp;IEM&nbsp;channels</label>
+                  </fieldset>
+                  <fieldset>
+                     <select name="wired_iem_channels[]">
+                        <option>0</option>
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                     </select>
+                     <label for="wired_iem_channels[]">Wired&nbsp;IEM&nbsp;channels</label>
                   </fieldset>
                   </div>
                </section>

@@ -7,6 +7,9 @@ const substitutes = {
       { item: "XLR Cable", quantity: 2 },
       { item: "XLR Cable (100ft)", quantity: 1 }
    ],
+   "1/4 TS Cable (Short)": [
+      { item: "1/4 TS Cable", quantity: 1 }
+   ],
    "DI Box": [
       { item: "DI Box (Passive)", quantity: 1 },
       { item: "DI Box (Active)", quantity: 1 },

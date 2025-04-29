@@ -43,7 +43,6 @@ function equipAlways(channels, equipment) {
    equipment = addItem(equipment, "XLR Cable (50ft)", 1);
 
    // for wedges
-
    const usingWedges = document.querySelector('input[name="use_wedges[]"]').checked;
    if (usingWedges) {
       equipment = addItem(equipment, "XLR-M to 1/4 TRS-M Adapter", 2);
@@ -74,6 +73,25 @@ function equipAlways(channels, equipment) {
       [equipment, chans[0]] = addItem(equipment, "1/4 TRS to 3.5mm TRS Adapter", 1, chans[0]);
 
       channels.push(...chans);
+   }
+
+   // for wireless IEMs
+   // const wirelessIEMChannels = parseInt(document.querySelector('select[name="wireless_iem_channels[]"]').value);
+   const usingWirelessIEMs = wirelessIEMChannels > 0;
+   if (usingWirelessIEMs) {
+      equipment = addItem(equipment, "IEM Transmitter", 1);
+      equipment = addItem(equipment, "IEM Transmitter Power Supply", 1);
+      equipment = addItem(equipment, "IEM Transmitter Antenna", 2);
+      equipment = addItem(equipment, "1/4 TS Cable (Short)", wirelessIEMChannels);
+   }
+
+   // for wired IEMs
+   // const wiredIEMChannels = parseInt(document.querySelector('select[name="wired_iem_channels[]"]').value);
+   const usingWiredIEMs = wiredIEMChannels > 0;
+   if (usingWiredIEMs) {
+      equipment = addItem(equipment, "1/4 TS Cable (Short)", wiredIEMChannels);
+      equipment = addItem(equipment, "DI Box (Passive)", wiredIEMChannels);
+      equipment = addItem(equipment, "XLR Cable", wiredIEMChannels);
    }
 
    return [ channels, equipment ];

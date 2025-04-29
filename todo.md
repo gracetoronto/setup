@@ -5,7 +5,8 @@
 [] Warn before reload and submit
 [] Keyboard extension cord
 [] Invert near and far
-[] Options for using in-ears?
+[] Fix sanctuary location
+[] Macbook should always be on Ch 11/12
 
 ## Low prio
 

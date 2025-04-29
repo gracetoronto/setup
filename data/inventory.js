@@ -51,6 +51,13 @@ const locations = {
       "USB-C to USB-A Adapter": 1,
       "USB-B to USB-A Adapter": 1,
 
+      // IEMs
+      "IEM Transmitter": 1,
+      "IEM Transmitter Power Supply": 1,
+      "IEM Transmitter Antenna": 2,
+      "IEM Receiver (Wireless)": 4,
+      "IEM Receiver (Wired)": 0,
+
       // Stands
       "Music Stand": 1,
       "Boom Stand": 2,
@@ -70,7 +77,7 @@ const locations = {
 
       // SOUND
       // Cables
-      "XLR Cable": 5,
+      "XLR Cable": 15,
       "XLR Cable (50ft)": 10,
       "XLR Cable (100ft)": 10,
       "1/4 TS Cable": 3,
@@ -108,7 +115,7 @@ const locations = {
       "Bass": 1,
       "Cajon": 1
    },
-   "Sanctuary": {
-      "DI Box (Passive)": 1
-   }
+   // "Sanctuary": {
+   //    "DI Box (Passive)": 1
+   // }
 }

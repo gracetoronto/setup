@@ -11,6 +11,11 @@ let equipment = {};
 let maxChannels = 12;
 let maxMicWireless = 2;
 
+let wirelessIEMChannels;
+let wiredIEMChannels;
+let wirelessIEMs;
+let wiredIEMs;
+
 
 // add event listeners
 
@@ -655,6 +660,10 @@ function handleChange() {
    maxMicWireless = 2;
    channels = [];
    equipment = {};
+   wirelessIEMChannels = parseInt(document.querySelector('select[name="wireless_iem_channels[]"]').value);
+   wiredIEMChannels = parseInt(document.querySelector('select[name="wired_iem_channels[]"]').value);
+   wirelessIEMs = locations["St. Andrew's Hall"]["IEM Receiver (Wireless)"];
+   wiredIEMs = wiredIEMChannels;
 
    // calculate equipment needed
    console.log("EQUIPMENT LIST");
