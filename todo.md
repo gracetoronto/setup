@@ -4,11 +4,13 @@
 
 [] Warn before reload and submit
 [] Keyboard extension cord
+[] Invert near and far
+[] Options for using in-ears?
 
 ## Low prio
 
 [] Screenshot table
-[] Options for using in-ears?
+
 [] Options for using sound cart only?
 [] Channel quantity + max channels
 [] Spacer channel

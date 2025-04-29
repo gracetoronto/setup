@@ -6,6 +6,7 @@ const locations = {
 
       // POWER
       "Power Bar": 1,
+      "AA Battery": 8,
 
       // PROJECTION
       "Projector": 1,
@@ -32,15 +33,18 @@ const locations = {
       // Cables
       "Audio Snake": 1,
       "XLR Cable": 5,
+      "1/4 TS Cable": 3,
+      "1/4 TS Cable (Short)": 2,
       "3.5mm TRS Cable": 1,
 
       // Mics
       "Mic (Wireless)": 1,
+      "Mic (Headset)": 2,
       "Mic (Wired)": 3,
       "Mic (SM57)": 1,
 
       // DI and Adapters
-      // "DI Box": 1,
+      "DI Box (Passive)": 1,
       "XLR-M to 1/4 TRS-M Adapter": 2,
       "1/4 TRS to 3.5mm TRS Adapter": 1,
       "USB-C to 3.5mm TRS Adapter": 1,
@@ -57,6 +61,7 @@ const locations = {
       // POWER
       "Extension Cord": 2,
       "Power Bar": 5,
+      "AA Battery": 8,
 
       // PROJECTION
       "HDMI Cable": 3,
@@ -66,19 +71,21 @@ const locations = {
       // SOUND
       // Cables
       "XLR Cable": 5,
-      "XLR Cable (Long)": 10,
-      "1/4 TS Cable": 4,
+      "XLR Cable (50ft)": 10,
+      "XLR Cable (100ft)": 10,
+      "1/4 TS Cable": 3,
 
       // Mics
-      "Mic (Wireless)": 1,
-      "Mic (Wired)": 6,
-      "Mic (SM57)": 4,
+      "Mic (Wireless)": 2,
+      "Mic (Headset)": 2,
+      "Mic (Wired)": 2,
+      "Mic (SM57)": 1,
       "Mic (Beta SM52a)": 1,
 
       // DI and Adapters
-      "DI Box": 4,
+      "DI Box (Passive)": 4,
       "DI Box (Active)": 2,
-      "DI Box (Stereo)": 3,
+      "DI Box (Passive Stereo)": 2,
       "DI Box (USB)": 1,
       "1/4 TRS-M to Dual 1/4 TS-M Adapter": 1,
       "3.5mm TRS to XLR Adapter": 1,
@@ -100,5 +107,8 @@ const locations = {
       "Keyboard Stand": 2,
       "Bass": 1,
       "Cajon": 1
+   },
+   "Sanctuary": {
+      "DI Box (Passive)": 1
    }
 }

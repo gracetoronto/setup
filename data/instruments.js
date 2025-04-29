@@ -25,7 +25,7 @@ function addItem(equipment, item, add, chan) {
 }
 
 function xlrLength(musician) {
-   return musician.position === "far" ? "XLR Cable (Long)" : "XLR Cable";
+   return musician.position === "far" ? "XLR Cable (50ft)" : "XLR Cable";
 }
 
 function equipSinging(musician, equipment, chans) {

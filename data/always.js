@@ -40,7 +40,7 @@ function equipAlways(channels, equipment) {
 
    // for Main L/R
    equipment = addItem(equipment, "XLR Cable", 1);
-   equipment = addItem(equipment, "XLR Cable (Long)", 1);
+   equipment = addItem(equipment, "XLR Cable (50ft)", 1);
 
    // for wedges
 
