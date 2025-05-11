@@ -102,6 +102,9 @@ const locations = {
       "Wedge (Active)": 2,
       "IEC Power Cable": 4,
 
+      // IEMs
+      "IEM Receiver (Wired)": 1,
+
       // Stands
       "Music Stand": 5,
       "Boom Stand": 6,

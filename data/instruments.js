@@ -58,38 +58,49 @@ function equipSinging(musician, equipment, chans) {
    return [equipment, chans];
 }
 
-function equipIEM(equipment, chan) {
+function equipIEM(musician, equipment, chan) {
 
-   if (chan) {
-      if (wirelessIEMChannels > 0 && wirelessIEMs > 0) {
-         [equipment, chan] = addItem(equipment, "IEM Receiver (Wireless)", 1, chan);
-         [equipment, chan] = addItem(equipment, "AA Battery", 2, chan);
-         wirelessIEMs--;
-      } else if (wiredIEMChannels > 0 && wiredIEMs > 0) {
-         [equipment, chan] = addItem(equipment, "IEM Receiver (Wired)", 1, chan);
-         [equipment, chan] = addItem(equipment, "AA Battery", 2, chan);
-         wiredIEMs--;
+   if (musician.iem) {
+
+      if (chan) {
+         if (wirelessIEMChannels > 0 && wirelessIEMs > 0) {
+            [equipment, chan] = addItem(equipment, "IEM Receiver (Wireless)", 1, chan);
+            [equipment, chan] = addItem(equipment, "AA Battery", 2, chan);
+            wirelessIEMs--;
+         } else if (wiredIEMChannels > 0 && wiredIEMs > 0) {
+            [equipment, chan] = addItem(equipment, "IEM Receiver (Wired)", 1, chan);
+            [equipment, chan] = addItem(equipment, "AA Battery", 2, chan);
+            wiredIEMs--;
+         } else {
+            [equipment, chan] = addItem(equipment, "IEM Receiver (Any)", 1, chan);
+            [equipment, chan] = addItem(equipment, "AA Battery", 2, chan);
+         }
+
+         return [equipment, chan];
       } else {
-         [equipment, chan] = addItem(equipment, "IEM Receiver (Any)", 1, chan);
-         [equipment, chan] = addItem(equipment, "AA Battery", 2, chan);
+         if (wirelessIEMChannels > 0 && wirelessIEMs > 0) {
+            equipment = addItem(equipment, "IEM Receiver (Wireless)", 1);
+            equipment = addItem(equipment, "AA Battery", 2);
+            wirelessIEMs--;
+         } else if (wiredIEMChannels > 0 && wiredIEMs > 0) {
+            equipment = addItem(equipment, "IEM Receiver (Wired)", 1);
+            equipment = addItem(equipment, "AA Battery", 2);
+            wiredIEMs--;
+         } else {
+            equipment = addItem(equipment, "IEM Receiver (Any)", 1);
+            equipment = addItem(equipment, "AA Battery", 2);
+         }
+
+         return equipment;
       }
 
-      return [equipment, chan];
    } else {
-      if (wirelessIEMChannels > 0 && wirelessIEMs > 0) {
-         equipment = addItem(equipment, "IEM Receiver (Wireless)", 1);
-         equipment = addItem(equipment, "AA Battery", 2);
-         wirelessIEMs--;
-      } else if (wiredIEMChannels > 0 && wiredIEMs > 0) {
-         equipment = addItem(equipment, "IEM Receiver (Wired)", 1);
-         equipment = addItem(equipment, "AA Battery", 2);
-         wiredIEMs--;
-      } else {
-         equipment = addItem(equipment, "IEM Receiver (Any)", 1);
-         equipment = addItem(equipment, "AA Battery", 2);
-      }
 
-      return equipment;
+      if (chan) {
+         return [equipment, chan];
+      } else {
+         return equipment;
+      }
    }
 }
 
@@ -108,7 +119,7 @@ const instruments = [
 
          [equipment, chans] = equipSinging(musician, equipment, chans);
          [equipment, chans[0]] = addItem(equipment, "Music Stand", 1, chans[0]);
-         equipment = equipIEM(equipment);
+         [equipment, chans[0]] = equipIEM(musician, equipment, chans[0]);
 
          channels.push(...chans);
 
@@ -125,20 +136,23 @@ const instruments = [
       },
       equip: (musician, channels, equipment) => {
 
-         // always
          let chans = [{ label: "Acoustic Guitar", musician: musician }];
-         [equipment, chans[0]] = addItem(equipment, "1/4 TS Cable", 1, chans[0]);
-         [equipment, chans[0]] = addItem(equipment, "DI Box", 1, chans[0]);
-         [equipment, chans[0]] = addItem(equipment, xlrLength(musician), 1, chans[0]);
-         [equipment, chans[0]] = addItem(equipment, "Music Stand", 1, chans[0]);
-         equipment = equipIEM(equipment);
-
-         // singing
-         [equipment, chans] = equipSinging(musician, equipment, chans);
 
          if (!musician.bringing) {
             [equipment, chans[0]] = addItem(equipment, "Acoustic Guitar", 1, chans[0]);
          }
+
+         // always
+         [equipment, chans[0]] = addItem(equipment, "1/4 TS Cable", 1, chans[0]);
+         [equipment, chans[0]] = addItem(equipment, "DI Box", 1, chans[0]);
+         [equipment, chans[0]] = addItem(equipment, xlrLength(musician), 1, chans[0]);
+         [equipment, chans[0]] = addItem(equipment, "Music Stand", 1, chans[0]);
+
+         // IEM
+         [equipment, chans[0]] = equipIEM(musician, equipment, chans[0]);
+
+         // singing
+         [equipment, chans] = equipSinging(musician, equipment, chans);
 
          channels.push(...chans);
 
@@ -168,11 +182,11 @@ const instruments = [
             [equipment, chans[1]] = addItem(equipment, "Boom Stand", 1, chans[1]);
          }
 
+         // IEM
+         [equipment, chans[0]] = equipIEM(musician, equipment, chans[0]);
+
          // singing
          [equipment, chans] = equipSinging(musician, equipment, chans);
-
-         // always
-         equipment = equipIEM(equipment);
 
          channels.push(...chans);
 
@@ -194,8 +208,11 @@ const instruments = [
          // singing
          [equipment, chans] = equipSinging(musician, equipment, chans);
 
-         // always
-         equipment = equipIEM(equipment);
+         if (chans.length > 0) {
+            [equipment, chans[0]] = equipIEM(musician, equipment, chans[0]);
+         } else {
+            equipment = equipIEM(musician, equipment);
+         }
 
          channels.push(...chans);
 
@@ -219,6 +236,11 @@ const instruments = [
 
             chans.push({ label: `Keyboard L`, musician: musician }, { label: `Keyboard R`, musician: musician });
 
+            if (!musician.bringing) {
+               [equipment, chans[0]] = addItem(equipment, "Keyboard", 1, chans[0]);
+               [equipment, chans[0]] = addItem(equipment, "Keyboard Stand", 1, chans[0]);
+            }
+
             [equipment, chans[0]] = addItem(equipment, "1/4 TS Cable", 1, chans[0]);
             [equipment, chans[1]] = addItem(equipment, "1/4 TS Cable", 1, chans[1]);
 
@@ -227,28 +249,28 @@ const instruments = [
             [equipment, chans[0]] = addItem(equipment, xlrLength(musician), 1, chans[0]);
             [equipment, chans[1]] = addItem(equipment, xlrLength(musician), 1, chans[1]);
 
-            // if mono
+         // if mono
          } else {
 
             chans.push({ label: `Keyboard`, musician: musician });
+
+            if (!musician.bringing) {
+               [equipment, chans[0]] = addItem(equipment, "Keyboard", 1, chans[0]);
+               [equipment, chans[0]] = addItem(equipment, "Keyboard Stand", 1, chans[0]);
+            }
 
             [equipment, chans[0]] = addItem(equipment, "1/4 TS Cable", 1, chans[0]);
             [equipment, chans[0]] = addItem(equipment, "DI Box", 1, chans[0]);
             [equipment, chans[0]] = addItem(equipment, xlrLength(musician), 1, chans[0]);
          }
 
-         // singing
-         [equipment, chans] = equipSinging(musician, equipment, chans);
-
-         if (!musician.bringing) {
-            [equipment, chans[0]] = addItem(equipment, "Keyboard", 1, chans[0]);
-            [equipment, chans[0]] = addItem(equipment, "Keyboard Stand", 1, chans[0]);
-         }
-
          // always
          [equipment, chans[0]] = addItem(equipment, "Extension Cord", 1, chans[0]);
          [equipment, chans[0]] = addItem(equipment, "Music Stand", 1, chans[0]);
-         equipment = equipIEM(equipment);
+         [equipment, chans[0]] = equipIEM(musician, equipment, chans[0]);
+
+         // singing
+         [equipment, chans] = equipSinging(musician, equipment, chans);
 
          channels.push(...chans);
 
@@ -272,6 +294,11 @@ const instruments = [
 
             chans.push({ label: `Keyboard L`, musician: musician }, { label: `Keyboard R`, musician: musician });
 
+            if (!musician.bringing) {
+               [equipment, chans[0]] = addItem(equipment, "Keyboard", 1, chans[0]);
+               [equipment, chans[0]] = addItem(equipment, "Keyboard Stand", 1, chans[0]);
+            }
+
             [equipment, chans[0]] = addItem(equipment, xlrLength(musician), 1, chans[0]);
             [equipment, chans[1]] = addItem(equipment, xlrLength(musician), 1, chans[1]);
 
@@ -279,21 +306,22 @@ const instruments = [
          } else {
 
             chans.push({ label: `Keyboard`, musician: musician });
+            
+            if (!musician.bringing) {
+               [equipment, chans[0]] = addItem(equipment, "Keyboard", 1, chans[0]);
+               [equipment, chans[0]] = addItem(equipment, "Keyboard Stand", 1, chans[0]);
+            }            
 
             [equipment, chans[0]] = addItem(equipment, xlrLength(musician), 1, chans[0]);
          }
 
-         // singing
-         [equipment, chans] = equipSinging(musician, equipment, chans);
-
-         if (!musician.bringing) {
-            [equipment, chans[0]] = addItem(equipment, "Keyboard", 1, chans[0]);
-            [equipment, chans[0]] = addItem(equipment, "Keyboard Stand", 1, chans[0]);
-         }
-
          // always
          [equipment, chans[0]] = addItem(equipment, "Music Stand", 1, chans[0]);
-         equipment = equipIEM(equipment);
+         [equipment, chans[0]] = equipIEM(musician, equipment, chans[0]);
+         
+
+         // singing
+         [equipment, chans] = equipSinging(musician, equipment, chans);
 
          channels.push(...chans);
 
@@ -335,12 +363,12 @@ const instruments = [
             [equipment, chans[0]] = addItem(equipment, xlrLength(musician), 1, chans[0]);
          }
 
-         // singing
-         [equipment, chans] = equipSinging(musician, equipment, chans);
-
          // always
          [equipment, chans[0]] = addItem(equipment, "Music Stand", 1, chans[0]);
-         equipment = equipIEM(equipment);
+         [equipment, chans[0]] = equipIEM(musician, equipment, chans[0]);
+
+         // singing
+         [equipment, chans] = equipSinging(musician, equipment, chans);
 
          channels.push(...chans);
 
@@ -375,12 +403,12 @@ const instruments = [
             [equipment, chans[0]] = addItem(equipment, xlrLength(musician), 1, chans[0]);
          }
 
-         // singing
-         [equipment, chans] = equipSinging(musician, equipment, chans);
-
          // always
          [equipment, chans[0]] = addItem(equipment, "Music Stand", 1, chans[0]);
-         equipment = equipIEM(equipment);
+         [equipment, chans[0]] = equipIEM(musician, equipment, chans[0]);
+
+         // singing
+         [equipment, chans] = equipSinging(musician, equipment, chans);
 
          channels.push(...chans);
 
@@ -397,20 +425,21 @@ const instruments = [
       },
       equip: (musician, channels, equipment) => {
 
-         // always
          let chans = [{ label: `Bass`, musician: musician }];
-         [equipment, chans[0]] = addItem(equipment, "1/4 TS Cable", 1, chans[0]);
-         [equipment, chans[0]] = addItem(equipment, "DI Box", 1, chans[0]);
-         [equipment, chans[0]] = addItem(equipment, xlrLength(musician), 1, chans[0]);
-         [equipment, chans[0]] = addItem(equipment, "Music Stand", 1, chans[0]);
-         equipment = equipIEM(equipment);
-
-         // singing
-         [equipment, chans] = equipSinging(musician, equipment, chans);
 
          if (!musician.bringing) {
             [equipment, chans[0]] = addItem(equipment, "Bass", 1, chans[0]);
          }
+
+         // always
+         [equipment, chans[0]] = addItem(equipment, "1/4 TS Cable", 1, chans[0]);
+         [equipment, chans[0]] = addItem(equipment, "DI Box", 1, chans[0]);
+         [equipment, chans[0]] = addItem(equipment, xlrLength(musician), 1, chans[0]);
+         [equipment, chans[0]] = addItem(equipment, "Music Stand", 1, chans[0]);
+         [equipment, chans[0]] = equipIEM(musician, equipment, chans[0]);
+
+         // singing
+         [equipment, chans] = equipSinging(musician, equipment, chans);
 
          channels.push(...chans);
 
@@ -434,7 +463,7 @@ const instruments = [
          [equipment, chans[0]] = addItem(equipment, xlrLength(musician), 1, chans[0]);
          [equipment, chans[0]] = addItem(equipment, "Boom Stand", 1, chans[0]);
          [equipment, chans[0]] = addItem(equipment, "Music Stand", 1, chans[0]);
-         equipment = equipIEM(equipment);
+         [equipment, chans[0]] = equipIEM(musician, equipment, chans[0]);
 
          channels.push(...chans);
 
@@ -451,12 +480,18 @@ const instruments = [
       },
       equip: (musician, channels, equipment) => {
 
-         // always
          let chans = [{ label: `Cajon`, musician: musician }];
+
+         if (!musician.bringing) {
+            [equipment, chans[0]] = addItem(equipment, "Cajon", 1, chans[0]);
+         }
+
+         // always
          [equipment, chans[0]] = addItem(equipment, "Mic (Beta SM52a)", 1, chans[0]);
          [equipment, chans[0]] = addItem(equipment, xlrLength(musician), 1, chans[0]);
          [equipment, chans[0]] = addItem(equipment, "Boom Stand (Short)", 1, chans[0]);
-         equipment = equipIEM(equipment);
+         [equipment, chans[0]] = addItem(equipment, "Music Stand", 1, chans[0]);
+         [equipment, chans[0]] = equipIEM(musician, equipment, chans[0]);
 
          if (musician.stereo) {
             chans[0].label = `Cajon Back`;
@@ -466,14 +501,8 @@ const instruments = [
             [equipment, chans[1]] = addItem(equipment, "Boom Stand (Short)", 1, chans[1]);
          }
 
-         [equipment, chans[0]] = addItem(equipment, "Music Stand", 1, chans[0]);
-
          // singing
          [equipment, chans] = equipSinging(musician, equipment, chans);
-
-         if (!musician.bringing) {
-            [equipment, chans[0]] = addItem(equipment, "Cajon", 1, chans[0]);
-         }
 
          channels.push(...chans);
 

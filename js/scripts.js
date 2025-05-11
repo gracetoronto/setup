@@ -62,6 +62,9 @@ function addRow() {
       <td class="cell-lg cell-center">
          <input type="text" name="name[]" placeholder="Enter Name" style="width: 100%;" maxlength="20">
       </td>
+      <td class="cell-sm cell-center">
+         <input type="checkbox" name="iem[]" value="yes" checked>
+      </td>
       <td class="cell-md cell-center">
          <input type="checkbox" name="singing[]" value="yes" checked disabled>
       </td>
@@ -189,6 +192,7 @@ function updateSelection(rolesTable) {
    return rows.map(row => {
       return {
          name: row.querySelector('input[name="name[]"]').value,
+         iem: row.querySelector('input[name="iem[]"]').checked,
          instrument: row.querySelector('select[name="instrument[]"]').value,
          singing: row.querySelector('input[name="singing[]"]').checked,
          bringing: row.querySelector('input[name="bringing[]"]').checked,
