@@ -581,18 +581,46 @@ function reorderChannels(channels) {
       channels = channels.filter(chan => !filters[i](chan));
    });
 
-   // add lastStereo channels
-   if (lastStereo.length === 2) {
-      orderedChannels.push(lastStereo[1], lastStereo[0]);
-   }
+   if (orderedChannels.length > 6) {
+      
+      // add extra channels
+      while (orderedChannels.length < (maxChannels - 4)) {
+         orderedChannels.push({ label: "" });
+      }
 
-   // add extra channels
-   while ((orderedChannels.length + endChannels.length) < maxChannels) {
-      orderedChannels.push({ label: "" });
-   }
+      // add end channels
+      orderedChannels.push(...endChannels);
 
-   // add end channels
-   orderedChannels.push(...endChannels);
+      // add lastStereo channels
+      if (lastStereo.length === 2) {
+         orderedChannels.push(lastStereo[1], lastStereo[0]);
+      }
+
+      // add extra channels again
+      while ((orderedChannels.length) < maxChannels) {
+         orderedChannels.push({ label: "" });
+      }
+   
+   } else {
+
+      // add lastStereo channels
+      if (lastStereo.length === 2) {
+         orderedChannels.push(lastStereo[1], lastStereo[0]);
+      }
+
+      // add extra channels
+      while ((orderedChannels.length + endChannels.length) < (maxChannels - 2)) {
+         orderedChannels.push({ label: "" });
+      }
+
+      // add end channels
+      orderedChannels.push(...endChannels);
+
+      // add extra channels again
+      while ((orderedChannels.length) < maxChannels) {
+         orderedChannels.push({ label: "" });
+      }
+   }
 
    return orderedChannels;
 }
