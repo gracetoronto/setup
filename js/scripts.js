@@ -275,7 +275,8 @@ function sourceEquipment(equipment, locations) {
                if (diff > 0) {
 
                   // need equipment from this location
-                  needs[locName][eqItem] = eqQty;
+                  if (!needs[locName][eqItem]) { needs[locName][eqItem] = 0; }
+                  needs[locName][eqItem] += eqQty;
 
                   // don't need any more equipment
                   delete eq[eqItem];
@@ -286,7 +287,8 @@ function sourceEquipment(equipment, locations) {
                } else if (diff === 0) {
 
                   // need equipment from this location
-                  needs[locName][eqItem] = eqQty;
+                  if (!needs[locName][eqItem]) { needs[locName][eqItem] = 0; }
+                  needs[locName][eqItem] += eqQty;
 
                   // don't need any more equipment
                   delete eq[eqItem];
@@ -297,7 +299,8 @@ function sourceEquipment(equipment, locations) {
                } else if (diff < 0) {
 
                   // need equipment from this location
-                  needs[locName][eqItem] = locs[locName][eqItem];
+                  if (!needs[locName][eqItem]) { needs[locName][eqItem] = 0; }
+                  needs[locName][eqItem] += locs[locName][eqItem];
 
                   // need more equipment still
                   eq[eqItem] = -diff;
@@ -321,6 +324,62 @@ function sourceEquipment(equipment, locations) {
 
             // loop through substitutes
             substitutes[eqItem].forEach(sub => {
+
+               if (eqQty > 0) {
+
+                  // loop through location inventories to find substitute
+                  for (let [locName, locInventory] of Object.entries(locs)) {
+
+                     if (locInventory[sub.item] && eqQty > 0) {
+
+                        const diff = locInventory[sub.item] - eqQty * sub.quantity;
+
+                        if (diff > 0) {
+
+                           // need equipment from this location
+                           if (!needs[locName][sub.item]) { needs[locName][sub.item] = 0; }
+                           needs[locName][sub.item] += eqQty * sub.quantity;
+
+
+                           // don't need any more equipment
+                           delete eq[eqItem];
+                           eqQty = 0;
+
+                           // remaining quantity of equipment at location
+                           locs[locName][sub.item] = diff;
+
+                        } else if (diff === 0) {
+
+                           // need equipment from this location
+                           if (!needs[locName][sub.item]) { needs[locName][sub.item] = 0; }
+                           needs[locName][sub.item] += eqQty * sub.quantity;
+
+                           // don't need any more equipment
+                           delete eq[eqItem];
+                           eqQty = 0;
+
+                           // no more equipment at location
+                           locs[locName][sub.item] = 0;
+
+                        } else if (diff < 0) {
+
+                           // need equipment from this location
+                           if (!needs[locName][sub.item]) { needs[locName][sub.item] = 0; }
+                           needs[locName][sub.item] += locs[locName][sub.item];
+
+                           // need more equipment still
+                           eqQty = -diff;
+
+                           // no more equipment at location
+                           locs[locName][sub.item] = 0;
+                        }
+                     }
+                  }
+               }
+            });
+
+            // loop through substitutes
+            /* substitutes[eqItem].forEach(sub => {
 
                // loop through location inventories to find substitute
                for (let [locName, locInventory] of Object.entries(locs)) {
@@ -363,8 +422,8 @@ function sourceEquipment(equipment, locations) {
                         locs[locName][sub.item] = 0;
                      }
                   }
-               }
-            });
+               } 
+            }); */
          }
       }
    }
