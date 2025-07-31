@@ -49,10 +49,8 @@ function equipSinging(musician, equipment, chans) {
          [equipment, chans[i]] = addItem(equipment, xlrLength(musician), 1, chans[i]);
       }
 
-      // need boom stand
-      if (musician.instrument !== "none") {
-         [equipment, chans[i]] = addItem(equipment, "Boom Stand", 1, chans[i]);
-      }
+      // add boom stand regardless
+      [equipment, chans[i]] = addItem(equipment, "Boom Stand", 1, chans[i]);
    }
 
    return [equipment, chans];
