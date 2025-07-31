@@ -219,6 +219,42 @@ const instruments = [
       }
    },
    {
+      name: "keyboard_mainstage",
+      label:"Keyboard (Mainstage)",
+      constraints: {
+         singing: { checked: false, disabled: false },
+         bringing: { checked: false, disabled: true },
+         stereo: { checked: false, disabled: true }
+      },
+      equip(musician, channels, equipment) {
+
+         let chans = [];
+
+         chans.push({ label: `Keyboard`, musician: musician });
+
+         if (!musician.bringing) {
+            [equipment, chans[0]] = addItem(equipment, "Keyboard", 1, chans[0]);
+            [equipment, chans[0]] = addItem(equipment, "Keyboard Stand", 1, chans[0]);
+         }
+
+         // always
+         [equipment, chans[0]] = addItem(equipment, "MIDI Cable", 1, chans[0]);
+         [equipment, chans[0]] = addItem(equipment, "3.5mm TRS Cable", 1, chans[0]);
+         [equipment, chans[0]] = addItem(equipment, "DI Box", 1, chans[0]);
+         [equipment, chans[0]] = addItem(equipment, xlrLength(musician), 1, chans[0]);
+         [equipment, chans[0]] = addItem(equipment, "Extension Cord", 1, chans[0]);
+         [equipment, chans[0]] = addItem(equipment, "Music Stand", 1, chans[0]);
+         [equipment, chans[0]] = equipIEM(musician, equipment, chans[0]);
+
+         // singing
+         [equipment, chans] = equipSinging(musician, equipment, chans);
+
+         channels.push(...chans);
+
+         return [channels, equipment];
+      }
+   },
+   {
       name: "keyboard",
       label: "Keyboard (TS out)",
       constraints: {

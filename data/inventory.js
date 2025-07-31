@@ -43,6 +43,7 @@ const locations = {
       "1/4 TS Cable": 3,
       "1/4 TS Cable (Short)": 2,
       "3.5mm TRS Cable": 1,
+      "MIDI Cable": 1,
 
       // Mics
       "Mic (Wireless)": 1,
