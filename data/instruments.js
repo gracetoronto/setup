@@ -43,7 +43,7 @@ function equipSinging(musician, equipment, chans) {
          [equipment, chans[i]] = addItem(equipment, "Mic (Wireless)", 1, chans[i]);
          maxMicWireless--;
 
-         // using wired 
+      // using wired 
       } else {
          [equipment, chans[i]] = addItem(equipment, "Mic (Wired)", 1, chans[i]);
          [equipment, chans[i]] = addItem(equipment, xlrLength(musician), 1, chans[i]);
