@@ -39,7 +39,6 @@ const locations = {
       "Sound Cart": 1,
 
       // Cables
-      "Audio Snake": 1,
       "XLR Cable": 5,
       "1/4 TS Cable": 3,
       "1/4 TS Cable (Short)": 2,
@@ -85,6 +84,7 @@ const locations = {
 
       // SOUND
       // Cables
+      "Audio Snake": 1,
       "XLR Cable": 15,
       "XLR Cable (50ft)": 10,
       "XLR Cable (100ft)": 10,
@@ -111,7 +111,7 @@ const locations = {
       "IEC Power Cable": 4,
 
       // IEMs
-      "IEM Receiver (Wired)": 1,
+      "IEM Receiver (Wired)": 2,
 
       // Stands
       "Music Stand": 5,
