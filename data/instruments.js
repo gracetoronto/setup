@@ -145,6 +145,7 @@ const instruments = [
          [equipment, chans[0]] = addItem(equipment, "DI Box", 1, chans[0]);
          [equipment, chans[0]] = addItem(equipment, xlrLength(musician), 1, chans[0]);
          [equipment, chans[0]] = addItem(equipment, "Music Stand", 1, chans[0]);
+         [equipment, chans[0]] = addItem(equipment, "Guitar Stand", 1, chans[0]);
 
          // IEM
          [equipment, chans[0]] = equipIEM(musician, equipment, chans[0]);
@@ -363,6 +364,7 @@ const instruments = [
 
          // always
          [equipment, chans[0]] = addItem(equipment, "Music Stand", 1, chans[0]);
+         [equipment, chans[0]] = addItem(equipment, "Guitar Stand", 1, chans[0]);
          [equipment, chans[0]] = equipIEM(musician, equipment, chans[0]);
 
          // singing
@@ -403,6 +405,7 @@ const instruments = [
 
          // always
          [equipment, chans[0]] = addItem(equipment, "Music Stand", 1, chans[0]);
+         [equipment, chans[0]] = addItem(equipment, "Guitar Stand", 1, chans[0]);
          [equipment, chans[0]] = equipIEM(musician, equipment, chans[0]);
 
          // singing
@@ -434,6 +437,7 @@ const instruments = [
          [equipment, chans[0]] = addItem(equipment, "DI Box", 1, chans[0]);
          [equipment, chans[0]] = addItem(equipment, xlrLength(musician), 1, chans[0]);
          [equipment, chans[0]] = addItem(equipment, "Music Stand", 1, chans[0]);
+         [equipment, chans[0]] = addItem(equipment, "Guitar Stand", 1, chans[0]);
          [equipment, chans[0]] = equipIEM(musician, equipment, chans[0]);
 
          // singing

@@ -121,6 +121,7 @@ const locations = {
 
       // Instruments
       "Acoustic Guitar": 1,
+      "Guitar Stand": 2,
       "Keyboard": 2,
       "Keyboard Stand": 2,
       "Bass": 1,
