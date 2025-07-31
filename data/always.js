@@ -9,7 +9,7 @@ function equipAlways(channels, equipment) {
 
    // POWER
 
-   equipment = addItem(equipment, "Power Bar", 1);
+   equipment = addItem(equipment, "Power Bar", 2);
    equipment = addItem(equipment, "Extension Cord", 1);
 
    // PROJECTION
@@ -17,6 +17,7 @@ function equipAlways(channels, equipment) {
    equipment = addItem(equipment, "Projector", 1);
    // equipment = addItem(equipment, "HDMI Cable", 1);
    equipment = addItem(equipment, "HDMI Cable (Long)", 1);
+   equipment = addItem(equipment, "HDMI Extension", 1);
    equipment = addItem(equipment, "USB-C Hub", 1);
 
    // LIGHTING
