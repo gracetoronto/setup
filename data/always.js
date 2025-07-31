@@ -7,6 +7,10 @@ function equipAlways(channels, equipment) {
    // to add three: equipment = addItem(equipment, "Item Name", 1);
    // item names should correspond to inventory.js
 
+   // MULTIPURPOSE
+
+   equipment = addItem(equipment, "CGF Cable Bin", 2);
+
    // POWER
 
    equipment = addItem(equipment, "Power Bar", 2);
@@ -22,14 +26,18 @@ function equipAlways(channels, equipment) {
 
    // LIGHTING
 
-   equipment = addItem(equipment, "Side Flood Lights", 4);
-   equipment = addItem(equipment, "Stage PAR", 4);
-   equipment = addItem(equipment, "Stage Wash", 4);
-   equipment = addItem(equipment, "DMX Transmitter", 1);
-   equipment = addItem(equipment, "DMX Receiver", 6);
-   equipment = addItem(equipment, "USB to DMX Adapter", 1);
-   equipment = addItem(equipment, "USB-C Adapter", 1);
-   equipment = addItem(equipment, "Light Stand", 2);
+   // equipment = addItem(equipment, "Side Flood Lights", 4);
+   // equipment = addItem(equipment, "Stage PAR", 4);
+   // equipment = addItem(equipment, "Stage Wash", 4);
+   // equipment = addItem(equipment, "DMX Transmitter", 1);
+   // equipment = addItem(equipment, "DMX Receiver", 6);
+   // equipment = addItem(equipment, "USB to DMX Adapter", 1);
+   // equipment = addItem(equipment, "USB-C Adapter", 1);
+   // equipment = addItem(equipment, "Light Stand", 2);
+   equipment = addItem(equipment, "PAR Light Rig", 2);
+   equipment = addItem(equipment, "PAR Light Stand", 2);
+   equipment = addItem(equipment, "Bar Light", 2);
+   equipment = addItem(equipment, "DMX Cable", 4);
 
    // SOUND
 

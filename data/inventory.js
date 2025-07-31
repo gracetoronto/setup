@@ -4,6 +4,10 @@ const locations = {
       // Sean and Josh: if you can, please verify the quantities and update them
       // feel free to add more items if necessary
 
+      // MULTIPURPOSE
+
+      "CGF Cable Bin": 2,
+
       // POWER
       "Power Bar": 1,
       "AA Battery": 8,
@@ -15,14 +19,18 @@ const locations = {
       "Mini DisplayPort to HDMI Adapter": 1,
 
       // LIGHTING
-      "Side Flood Lights": 4,
-      "Stage PAR": 4,
-      "Stage Wash": 4,
-      "DMX Transmitter": 1,
-      "DMX Receiver": 6,
-      "USB to DMX Adapter": 1, // clarify what type of USB
-      "USB-C Adapter": 1, // clarify
-      "Light Stand": 2,
+      "PAR Light Rig": 2,
+      "PAR Light Stand": 2,
+      "Bar Light": 2,
+      "DMX Cable": 4,
+      // "Side Flood Lights": 4,
+      // "Stage PAR": 4,
+      // "Stage Wash": 4,
+      // "DMX Transmitter": 1,
+      // "DMX Receiver": 6,
+      // "USB to DMX Adapter": 1, // clarify what type of USB
+      // "USB-C Adapter": 1, // clarify
+      // "Light Stand": 2,
 
       // SOUND
 
